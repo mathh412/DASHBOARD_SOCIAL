@@ -6,7 +6,7 @@ const URL_SETORES = "./dados/setores/setores_sp_web.geojson";
 const URL_INDICADORES = "./dados/setores/indicadores_sp.json";
 const TEMPO_DEBOUNCE = 220;
 
-// Preenchido por parcerias.js antes do DOMContentLoaded.
+// Preenchido por carregarCatalogoParcerias() antes de inicializar os filtros.
 const PARCERIAS = {};
 
 const CORES_QUANTITATIVAS = [
@@ -2796,6 +2796,13 @@ function registrarEventos() {
 
 async function iniciar() {
     carregarElementos();
+    try {
+        await carregarCatalogoParcerias();
+    } catch (erro) {
+        console.error(erro);
+        atualizarStatus('Erro ao carregar catálogo de parcerias. Recarregue a página.', 'erro');
+        return;
+    }
     inicializarMapa();
     registrarEventos();
 
@@ -2806,5 +2813,5 @@ async function iniciar() {
 
 document.addEventListener(
     "DOMContentLoaded",
-    iniciar
+    () => { window.SPPDashboardPronto = iniciar(); }
 );

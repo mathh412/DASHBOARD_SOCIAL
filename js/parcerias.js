@@ -1,136 +1,42 @@
-// ============================================================
-// CATÁLOGO CENTRAL DE PARCERIAS
-// ============================================================
-
+// Fonte única: catálogo gerado e publicado pelo repositório mapa.
 const URL_BASE_MAPA =
-    "https://raw.githubusercontent.com/mathh412/mapa/refs/heads/main/grupos";
+    'https://raw.githubusercontent.com/mathh412/mapa/refs/heads/main/grupos';
+const URL_CATALOGO_PARCERIAS = `${URL_BASE_MAPA}/catalogo.json`;
+let promessaCatalogoParcerias = null;
 
-Object.assign(PARCERIAS, {
-
-    ceus1: {
-        nome: "CEUs 1",
-        arquivo: `${URL_BASE_MAPA}/ceus1/perimetros.geojson`,
-        categoria: "Educação"
-    },
-
-    ceus2: {
-        nome: "CEUs 2",
-        arquivo: `${URL_BASE_MAPA}/ceus2/perimetros.geojson`,
-        categoria: "Educação"
-    },
-
-    parques1: {
-        nome: "Parques 1",
-        arquivo: `${URL_BASE_MAPA}/parques1/perimetros.geojson`,
-        categoria: "Parques"
-    },
-
-    parques3: {
-        nome: "Parques 3",
-        arquivo: `${URL_BASE_MAPA}/parques3/perimetros.geojson`,
-        categoria: "Parques"
-    },
-
-    termleste: {
-        nome: "Terminais Leste",
-        arquivo: `${URL_BASE_MAPA}/termleste/perimetros.geojson`,
-        categoria: "Terminais"
-    },
-
-    termnoroeste: {
-        nome: "Terminais Noroeste",
-        arquivo: `${URL_BASE_MAPA}/termnoroeste/perimetros.geojson`,
-        categoria: "Terminais"
-    },
-
-    termsul: {
-        nome: "Terminais Sul",
-        arquivo: `${URL_BASE_MAPA}/termsul/perimetros.geojson`,
-        categoria: "Terminais"
-    },
-
-    dompedro: {
-        nome: "Dom Pedro",
-        arquivo: `${URL_BASE_MAPA}/dompedro/perimetros.geojson`,
-        categoria: "Terminais"
-    },
-
-    anhembi: {
-        nome: "Complexo do Anhembi",
-        arquivo: `${URL_BASE_MAPA}/anhembi/perimetros.geojson`,
-        categoria: "Equipamentos"
-    },
-
-    pacaembu: {
-        nome: "Pacaembu",
-        arquivo: `${URL_BASE_MAPA}/pacaembu/perimetros.geojson`,
-        categoria: "Equipamentos"
-    },
-
-    anhangabau: {
-        nome: "Vale do Anhangabaú",
-        arquivo: `${URL_BASE_MAPA}/anhangabau/perimetros.geojson`,
-        categoria: "Espaços Urbanos"
-    },
-
-    baixoantartica: {
-        nome: "Baixo do Viaduto Antártica",
-        arquivo: `${URL_BASE_MAPA}/baixoantartica/perimetros.geojson`,
-        categoria: "Baixos de Viaduto"
-    },
-
-    baixolapa: {
-        nome: "Baixo do Viaduto Lapa",
-        arquivo: `${URL_BASE_MAPA}/baixolapa/perimetros.geojson`,
-        categoria: "Baixos de Viaduto"
-    },
-
-    baixopompeia: {
-        nome: "Baixo do Viaduto Pompéia",
-        arquivo: `${URL_BASE_MAPA}/baixopompeia/perimetros.geojson`,
-        categoria: "Baixos de Viaduto"
-    },
-
-    cemb1consolare: {
-        nome: "Cemitérios - Bloco 1 / Consolare",
-        arquivo: `${URL_BASE_MAPA}/cemb1consolare/perimetros.geojson`,
-        categoria: "Cemitérios"
-    },
-
-    cemb2cortel: {
-        nome: "Cemitérios - Bloco 2 / Cortel",
-        arquivo: `${URL_BASE_MAPA}/cemb2cortel/perimetros.geojson`,
-        categoria: "Cemitérios"
-    },
-
-    cemb3maya: {
-        nome: "Cemitérios - Bloco 3 / Maya",
-        arquivo: `${URL_BASE_MAPA}/cemb3maya/perimetros.geojson`,
-        categoria: "Cemitérios"
-    },
-
-    cemb4velar: {
-        nome: "Cemitérios - Bloco 4 / Velar",
-        arquivo: `${URL_BASE_MAPA}/cemb4velar/perimetros.geojson`,
-        categoria: "Cemitérios"
-    },
-
-    mercadosantoamaro: {
-        nome: "Mercado de Santo Amaro",
-        arquivo: `${URL_BASE_MAPA}/mercadosantoamaro/perimetros.geojson`,
-        categoria: "Mercados"
-    },
-
-    mercadopaulistanokinjo: {
-        nome: "Mercado Paulistano / Kinjo",
-        arquivo: `${URL_BASE_MAPA}/mercadopaulistanokinjo/perimetros.geojson`,
-        categoria: "Mercados"
+function carregarCatalogoParcerias() {
+    // Uma única requisição compartilhada entre visão geral e comparação.
+    if (!promessaCatalogoParcerias) {
+        promessaCatalogoParcerias = (async () => {
+            const resposta = await fetch(URL_CATALOGO_PARCERIAS, { cache: 'no-cache' });
+            if (!resposta.ok) throw new Error(`Erro ao carregar catálogo: HTTP ${resposta.status}`);
+            const catalogo = await resposta.json();
+            if (catalogo.versao !== 1 || !Array.isArray(catalogo.grupos)) {
+                throw new Error('Formato de catálogo inválido.');
+            }
+            const entradas = [];
+            const codigos = new Set();
+            for (const grupo of catalogo.grupos) {
+                if (!grupo || !/^[a-z0-9][a-z0-9_-]*$/.test(grupo.codigo)
+                    || codigos.has(grupo.codigo) || typeof grupo.ativo !== 'boolean'
+                    || typeof grupo.nome !== 'string' || !grupo.nome.trim()
+                    || typeof grupo.categoria !== 'string' || !grupo.categoria.trim()
+                    || !Array.isArray(grupo.arquivos) || !grupo.arquivos.includes('perimetros.geojson')) {
+                    throw new Error('Parceria inválida no catálogo.');
+                }
+                codigos.add(grupo.codigo);
+                if (grupo.ativo) entradas.push([grupo.codigo, {
+                    nome: grupo.nome,
+                    categoria: grupo.categoria,
+                    arquivo: `${URL_BASE_MAPA}/${grupo.codigo}/perimetros.geojson`
+                }]);
+            }
+            if (!entradas.length) throw new Error('O catálogo não possui parcerias ativas.');
+            // Publicação atômica: não deixa um catálogo parcial em caso de erro.
+            Object.defineProperties(PARCERIAS, Object.fromEntries(entradas.map(([codigo, valor]) =>
+                [codigo, { value: valor, enumerable: true, configurable: true, writable: true }])));
+            return PARCERIAS;
+        })();
     }
-
-});
-
-console.log(
-    "Catálogo de parcerias carregado:",
-    Object.keys(PARCERIAS).length,
-    "parcerias"
-);
+    return promessaCatalogoParcerias;
+}

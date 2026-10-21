@@ -210,42 +210,11 @@ Responsável por:
 
 ### `parcerias.js`
 
-Catálogo central das parcerias disponíveis.
+Carrega `https://raw.githubusercontent.com/mathh412/mapa/refs/heads/main/grupos/catalogo.json` e constrói PARCERIAS com os grupos ativos. Cada entrada aponta automaticamente para `grupos/<codigo>/perimetros.geojson` no mesmo repositório. Não há lista manual de parcerias no dashboard.
 
-Cada parceria aponta para o arquivo:
+A função `carregarCatalogoParcerias()` compartilha uma única promessa entre as páginas. A inicialização espera essa promessa antes de montar filtros e iniciar análises. A comparação também espera a inicialização dos dados territoriais, evitando uma análise automática antes de os dados estarem prontos. Falhas HTTP, JSON ou catálogo inválido são informadas na interface e impedem a inicialização parcial; recarregue após corrigir a publicação.
 
-```text
-perimetros.geojson
-```
-
-existente no repositório do mapa.
-
-Exemplo:
-
-```javascript
-ceus1: {
-    nome: "CEUs 1",
-    arquivo: `${URL_BASE_MAPA}/ceus1/perimetros.geojson`,
-    categoria: "Educação"
-}
-```
-
-Atualmente o catálogo inclui grupos como:
-
-- CEUs 1;
-- CEUs 2;
-- Parques 1;
-- Parques 3;
-- Terminais Leste;
-- Terminais Noroeste;
-- Terminais Sul;
-- Dom Pedro;
-- Complexo do Anhembi;
-- Pacaembu;
-- Vale do Anhangabaú;
-- Baixos de Viaduto;
-- Cemitérios;
-- Mercados.
+Para adicionar uma parceria, crie apenas config.json e perimetros.geojson na pasta do grupo no mapa e gere/publique seu catálogo. Não altere este repositório. Publique primeiro a versão do mapa com catálogo; depois publique esta versão do dashboard. Novas parcerias aparecem ao recarregar após a propagação do catálogo remoto, respeitando o filtro grupo da URL. Grupos com ativo: false não aparecem.
 
 ---
 
@@ -610,3 +579,16 @@ https://github.com/mathh412/DASHBOARD_SOCIAL
 ---
 
 Projeto desenvolvido para apoiar análises territoriais, sociodemográficas e socioeconômicas de equipamentos e parcerias no Município de São Paulo.
+## Regras e validação da comparação
+
+Parcerias com um equipamento selecionadas em A são excluídas das opções de B, e vice-versa. Parcerias com dois ou mais equipamentos podem aparecer nos dois lados; ao selecionar o mesmo equipamento, o lado oposto muda para uma alternativa válida. O botão e a execução também rejeitam equipamentos iguais. Uma URL restrita a uma parceria com apenas um equipamento deixa B indisponível e explica por que não é possível comparar.
+
+Os filtros não incluem opção vazia “Selecione”. A seleção inicial usa valores válidos automaticamente. Visão Geral e Comparação continuam com nivel=perimetro&nivel_travado=1 e integração iframe/postMessage.
+
+Com Node.js 22 ou superior e o mapa na pasta irmã `../mapa`, execute:
+
+```sh
+node --test tests/integracao.test.cjs
+```
+
+Para outra localização, defina a variável de ambiente MAPA_REPO. Os testes usam HTTP local e contexto JavaScript isolado, sem publicar, sem alterar dados originais e sem dependências npm. Cobrem catálogo, nova parceria, inativos, falhas, arquivos opcionais, restrições da comparação e parâmetros dos iframes. Não substituem conferência visual no navegador nem a execução do workflow na conta GitHub.

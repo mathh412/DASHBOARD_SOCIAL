@@ -329,7 +329,7 @@
 
 
         select.innerHTML =
-            '<option value="">Selecione</option>';
+            '';
 
 
         for (
@@ -361,7 +361,7 @@
 
 
         select.disabled =
-            false;
+            locais.length === 0;
 
 
         // ====================================================
@@ -389,8 +389,8 @@
         }
         else {
 
-            select.value =
-                "";
+            select.selectedIndex =
+                select.options.length ? 0 : -1;
 
         }
 
@@ -549,15 +549,13 @@
         // SEGURANÇA
         // ====================================================
         //
-        // Se por algum motivo já existiam A e B iguais
-        // antes da sincronização, o valor inválido é limpo
-        // e avisamos o comparacao.js através do change.
+        // Se a reconstrução escolher uma alternativa válida ou
+        // esvaziar um lado sem alternativas, atualizamos também
+        // a feature usada na análise através do change.
         // ====================================================
 
         if (
-            valorAnteriorA
-            &&
-            !valorAtualA
+            valorAnteriorA !== valorAtualA
         ) {
 
             elementos
@@ -576,9 +574,7 @@
 
 
         if (
-            valorAnteriorB
-            &&
-            !valorAtualB
+            valorAnteriorB !== valorAtualB
         ) {
 
             elementos

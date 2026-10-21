@@ -1158,76 +1158,24 @@ function preencherLocaisComparacao(
 // EQUIPAMENTOS DIFERENTES
 // ============================================================
 
-function garantirEquipamentosDiferentesComparacao() {
-
-    if (
-        !comparacaoElementos.localA
-        ||
-        !comparacaoElementos.localB
-    ) {
-
-        return;
-
-    }
-
-
-    const mesmoGrupo =
-        comparacaoElementos
-            .parceriaA
-            .value
-        ===
-        comparacaoElementos
-            .parceriaB
-            .value;
-
-
-    if (
-        !mesmoGrupo
-    ) {
-
-        return;
-
-    }
-
-
-    const mesmoEquipamento =
-        comparacaoElementos
-            .localA
-            .value
-        ===
-        comparacaoElementos
-            .localB
-            .value;
-
-
-    if (
-        !mesmoEquipamento
-    ) {
-
-        return;
-
-    }
-
-
-    if (
-        comparacaoElementos
-            .localB
-            .options
-            .length >
-        1
-    ) {
-
-        comparacaoElementos
-            .localB
-            .selectedIndex =
-                1;
-
-
-        alterarLocalComparacaoB();
-
-    }
+function equipamentosIguaisComparacao() {
+    return Boolean(featureComparacaoA && featureComparacaoB
+        && comparacaoElementos.parceriaA.value === comparacaoElementos.parceriaB.value
+        && comparacaoElementos.localA.value === comparacaoElementos.localB.value);
 }
 
+function garantirEquipamentosDiferentesComparacao(ladoAlterado = 'A') {
+    if (!equipamentosIguaisComparacao()) return;
+    const destino = ladoAlterado === 'B' ? 'A' : 'B';
+    const select = comparacaoElementos['local' + destino];
+    const valor = comparacaoElementos['local' + ladoAlterado].value;
+    const alternativa = Array.from(select.options).find(option => option.value !== valor);
+    if (alternativa) {
+        select.value = alternativa.value;
+        if (destino === 'A') alterarLocalComparacaoA();
+        else alterarLocalComparacaoB();
+    }
+}
 
 // ============================================================
 // SINCRONIZAR RESTRIÇÕES ENTRE A E B
@@ -1692,6 +1640,7 @@ function alterarLocalComparacaoA() {
         null;
 
 
+    garantirEquipamentosDiferentesComparacao('A');
     verificarBotaoComparar();
 
     atualizarMapaBaseComparacao();
@@ -1741,6 +1690,7 @@ function alterarLocalComparacaoB() {
         null;
 
 
+    garantirEquipamentosDiferentesComparacao('B');
     verificarBotaoComparar();
 
     atualizarMapaBaseComparacao();
@@ -1763,27 +1713,16 @@ function alterarLocalComparacaoB() {
 // ============================================================
 
 function verificarBotaoComparar() {
-
-    const valido =
-        Boolean(
-            featureComparacaoA
-            &&
-            featureComparacaoB
-        );
-
-
-    comparacaoElementos.botao.disabled =
-        !valido;
-
-
-    comparacaoElementos.status.textContent =
-        valido
-            ?
-            "Pronto para comparar"
-            :
-            "Aguardando equipamentos";
+    const valido = Boolean(featureComparacaoA && featureComparacaoB && !equipamentosIguaisComparacao());
+    comparacaoElementos.botao.disabled = !valido;
+    const grupoUnico = window.SPPDashboardURL?.obterGrupoUnico();
+    const unicoEquipamento = grupoUnico && parceriaComparacaoTemUmEquipamento(parceriaComparacaoA);
+    comparacaoElementos.status.textContent = valido
+        ? 'Pronto para comparar'
+        : unicoEquipamento
+            ? 'Comparação indisponível: esta parceria possui apenas um equipamento.'
+            : 'Aguardando dois equipamentos diferentes';
 }
-
 
 // ============================================================
 // RAIO
@@ -2565,6 +2504,10 @@ function renderizarTabelaComparacao() {
 // ============================================================
 
 function executarComparacao() {
+    if (equipamentosIguaisComparacao()) {
+        verificarBotaoComparar();
+        return;
+    }
 
     if (
         !featureComparacaoA
@@ -3030,6 +2973,15 @@ async function iniciarComparacao() {
     carregarElementosComparacao();
 
 
+    try {
+        await carregarCatalogoParcerias();
+        await window.SPPDashboardPronto;
+    } catch (erro) {
+        console.error(erro);
+        comparacaoElementos.botao.disabled = true;
+        comparacaoElementos.status.textContent = 'Erro ao carregar catálogo de parcerias. Recarregue a página.';
+        return;
+    }
     preencherParceriasComparacao();
 
 
