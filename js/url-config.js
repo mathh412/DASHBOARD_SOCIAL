@@ -383,13 +383,6 @@
 
     /*
      * No dashboard social o padrão é perímetro.
-     *
-     * Se quiser outro nível:
-     *
-     * ?nivel=local
-     * ?nivel=distrito
-     * ?nivel=subprefeitura
-     * etc.
      */
 
     const nivelMapa =
@@ -444,6 +437,19 @@
             url.searchParams.set(
                 "nivel",
                 nivel
+            );
+
+        }
+
+
+        if (
+            opcoes.nivelTravado ===
+            true
+        ) {
+
+            url.searchParams.set(
+                "nivel_travado",
+                "1"
             );
 
         }
@@ -523,7 +529,10 @@
                 montarURLMapa(
                     {
                         nivel:
-                            nivelMapa
+                            "perimetro",
+
+                        nivelTravado:
+                            true
                     }
                 );
 
@@ -557,16 +566,14 @@
             "comparacao"
         ) {
 
-            /*
-             * A comparação sempre começa diretamente
-             * nos perímetros.
-             */
-
             iframeComparacao.src =
                 montarURLMapa(
                     {
                         nivel:
-                            "perimetro"
+                            "perimetro",
+
+                        nivelTravado:
+                            true
                     }
                 );
 
@@ -575,6 +582,36 @@
 
             iframeComparacao.src =
                 "about:blank";
+
+        }
+
+    }
+
+
+    // ========================================================
+    // REMOVER PLACEHOLDERS INICIAIS
+    // ========================================================
+
+    for (
+        const id
+        of [
+            "filtro-parceria",
+            "filtro-local"
+        ]
+    ) {
+
+        const select =
+            document.getElementById(
+                id
+            );
+
+
+        if (
+            select
+        ) {
+
+            select.innerHTML =
+                "";
 
         }
 
@@ -591,7 +628,7 @@
             elementos
                 .parceria
                 .innerHTML =
-                    '<option value="">Selecione</option>';
+                    "";
 
 
             const codigosPermitidos =
@@ -669,7 +706,8 @@
 
 
             elementos.parceria.disabled =
-                false;
+                entradas.length ===
+                0;
 
 
             elementos.local.disabled =
@@ -695,10 +733,6 @@
             elementos.passoFaixa.disabled =
                 true;
 
-
-            // =================================================
-            // GRUPO ÚNICO
-            // =================================================
 
             const grupoUnico =
                 obterGrupoUnico();
@@ -761,7 +795,252 @@
 
 
     // ========================================================
-    // AUTOLOAD DE GRUPO ÚNICO
+    // FILTRO DE EQUIPAMENTOS
+    // ========================================================
+
+    preencherLocais =
+        function () {
+
+            elementos
+                .local
+                .innerHTML =
+                    "";
+
+
+            if (
+                !parceriaGeoJSON
+                ||
+                !Array.isArray(
+                    parceriaGeoJSON.features
+                )
+            ) {
+
+                elementos.local.disabled =
+                    true;
+
+
+                return;
+
+            }
+
+
+            const locais =
+                parceriaGeoJSON
+                    .features
+                    .map(
+                        (
+                            feature,
+                            indice
+                        ) => ({
+
+                            indice,
+
+                            nome:
+                                nomeDoLocal(
+                                    feature
+                                )
+
+                        })
+                    )
+                    .sort(
+                        (
+                            a,
+                            b
+                        ) =>
+                            a.nome.localeCompare(
+                                b.nome,
+                                "pt-BR"
+                            )
+                    );
+
+
+            for (
+                const local
+                of locais
+            ) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    String(
+                        local.indice
+                    );
+
+
+                option.textContent =
+                    local.nome;
+
+
+                elementos
+                    .local
+                    .appendChild(
+                        option
+                    );
+
+            }
+
+
+            elementos.local.disabled =
+                locais.length ===
+                0;
+
+
+            if (
+                locais.length
+            ) {
+
+                elementos.local.selectedIndex =
+                    0;
+
+            }
+
+        };
+
+
+    // ========================================================
+    // ALTERAR PARCERIA
+    // ========================================================
+
+    alterarParceria =
+        async function () {
+
+            const codigo =
+                elementos
+                    .parceria
+                    .value;
+
+
+            limparAnaliseCompleta();
+
+
+            elementos
+                .local
+                .innerHTML =
+                    "";
+
+
+            elementos.local.disabled =
+                true;
+
+
+            elementos.raio.disabled =
+                true;
+
+
+            elementos.criterio.disabled =
+                true;
+
+
+            elementos.tema.disabled =
+                true;
+
+
+            elementos.indicadorDistancia.disabled =
+                true;
+
+
+            elementos.passoFaixa.disabled =
+                true;
+
+
+            if (
+                !codigo
+            ) {
+
+                parceriaGeoJSON =
+                    null;
+
+
+                return;
+
+            }
+
+
+            try {
+
+                const configuracao =
+                    PARCERIAS[
+                        codigo
+                    ];
+
+
+                atualizarStatus(
+                    `Carregando ${configuracao.nome}...`
+                );
+
+
+                const resposta =
+                    await fetch(
+                        configuracao.arquivo
+                    );
+
+
+                if (
+                    !resposta.ok
+                ) {
+
+                    throw new Error(
+                        "Erro ao carregar parceria."
+                    );
+
+                }
+
+
+                parceriaGeoJSON =
+                    await resposta.json();
+
+
+                preencherLocais();
+
+
+                atualizarStatus(
+                    `${configuracao.nome} carregado`,
+                    "ok"
+                );
+
+
+                if (
+                    elementos
+                        .local
+                        .options
+                        .length >
+                    0
+                ) {
+
+                    elementos.local.selectedIndex =
+                        0;
+
+
+                    alterarLocal();
+
+                }
+
+            }
+            catch (
+                erro
+            ) {
+
+                console.error(
+                    erro
+                );
+
+
+                atualizarStatus(
+                    "Erro ao carregar parceria",
+                    "erro"
+                );
+
+            }
+
+        };
+
+
+    // ========================================================
+    // CARREGAMENTO INICIAL
     // ========================================================
 
     const carregarDadosOriginal =
@@ -793,21 +1072,40 @@
             }
 
 
-            const grupoUnico =
+            let grupoSelecionado =
                 obterGrupoUnico();
 
 
             if (
-                !grupoUnico
+                !grupoSelecionado
             ) {
+
+                grupoSelecionado =
+                    elementos
+                        .parceria
+                        .options[
+                            0
+                        ]
+                        ?.value
+                    ||
+                    "";
+
+            }
+
+
+            if (
+                !grupoSelecionado
+            ) {
+
                 return;
+
             }
 
 
             elementos
                 .parceria
                 .value =
-                    grupoUnico;
+                    grupoSelecionado;
 
 
             await alterarParceria();

@@ -30,16 +30,109 @@ body {
 
 
 /* ============================================================
+   SEM TÍTULOS VISUAIS
+============================================================ */
+
+/*
+ * Remove os cabeçalhos de página:
+ *
+ * - Caracterização sociodemográfica
+ * - Vulnerabilidade e renda
+ * - Comparação territorial
+ * - Eyebrows/subtítulos associados
+ */
+
+.cabecalho-pagina {
+    display: none !important;
+}
+
+
+/*
+ * Visão Geral:
+ *
+ * remove "Área de influência" e subtítulo,
+ * mas mantém:
+ *
+ * - Colorir setores por
+ * - status
+ */
+
+.titulo-mapa > div:first-child {
+    display: none !important;
+}
+
+.titulo-mapa {
+    justify-content: flex-end;
+}
+
+
+/*
+ * Painéis que não possuem controles no cabeçalho.
+ *
+ * Remove:
+ *
+ * - Raça / Cor
+ * - Gênero
+ * - Vulnerabilidade
+ * - Áreas comparadas
+ * - Indicadores comparados
+ */
+
+.painel-analitico > .titulo-painel,
+.painel-ipvs > .titulo-painel,
+.comparacao-painel-mapa > .titulo-painel,
+.comparacao-painel-indicadores > .titulo-painel {
+    display: none !important;
+}
+
+
+/*
+ * Perfil por distância:
+ *
+ * remove somente o texto/título e mantém
+ * os selects Indicador e Intervalo.
+ */
+
+.cabecalho-distancia > div:first-child {
+    display: none !important;
+}
+
+.cabecalho-distancia {
+    justify-content: flex-end;
+}
+
+
+/*
+ * Remove o título "Composição territorial".
+ * Os indicadores individuais continuam visíveis.
+ */
+
+.comparacao-bloco-percentuais > h3 {
+    display: none !important;
+}
+
+
+/* ============================================================
    FILTROS PRINCIPAIS
 ============================================================ */
 
 .filtros {
     flex: 0 0 76px;
+
     min-width: 0;
-    padding: 8px 22px;
+
+    padding:
+        8px
+        22px;
+
     gap: 16px;
-    background: #ffffff;
-    border-bottom: 1px solid #dce3e6;
+
+    background:
+        #ffffff;
+
+    border-bottom:
+        1px solid
+        #dce3e6;
 }
 
 
@@ -68,7 +161,13 @@ body {
    COMPARAÇÃO
 ============================================================ */
 
-body[data-pagina="comparacao"] #filtros-principais {
+/*
+ * A comparação possui controles próprios.
+ * Portanto, não mostra os filtros globais.
+ */
+
+body[data-pagina="comparacao"]
+#filtros-principais {
     display: none !important;
 }
 
@@ -77,8 +176,13 @@ body[data-pagina="comparacao"] #filtros-principais {
    TAB COMPARAÇÃO
 ============================================================ */
 
-body[data-pagina="comparacao"] #tab-comparacao {
-    padding: 12px 20px 16px;
+body[data-pagina="comparacao"]
+#tab-comparacao {
+    padding:
+        12px
+        20px
+        16px;
+
     overflow: hidden;
 }
 
@@ -87,31 +191,39 @@ body[data-pagina="comparacao"] #tab-comparacao {
    CABEÇALHO DA COMPARAÇÃO
 ============================================================ */
 
-body[data-pagina="comparacao"] .comparacao-cabecalho {
-    height: 62px;
-    min-height: 62px;
-    padding: 0 2px 10px;
-    align-items: center;
+/*
+ * Não existe mais título/cabeçalho visual.
+ */
+
+body[data-pagina="comparacao"]
+.comparacao-cabecalho {
+    display: none !important;
 }
 
 
 /* ============================================================
    FILTROS A × B
-   AQUI ESTÁ A CORREÇÃO PRINCIPAL:
-   aumentamos a altura total para caber tudo sem scroll
 ============================================================ */
 
-body[data-pagina="comparacao"] .comparacao-filtros {
+body[data-pagina="comparacao"]
+.comparacao-filtros {
     height: 136px;
+
     min-height: 136px;
+
     margin-bottom: 12px;
+
     grid-template-columns:
         minmax(0, 1fr)
         30px
         minmax(0, 1fr)
         230px;
+
     gap: 10px;
+
     align-items: stretch;
+
+    overflow: hidden;
 }
 
 
@@ -119,25 +231,40 @@ body[data-pagina="comparacao"] .comparacao-filtros {
    CARDS A E B
 ============================================================ */
 
-body[data-pagina="comparacao"] .comparacao-local {
+body[data-pagina="comparacao"]
+.comparacao-local {
     height: 100%;
+
     min-width: 0;
-    padding: 10px 12px;
-    grid-template-columns: 42px minmax(0, 1fr);
+
+    padding:
+        10px
+        12px;
+
+    grid-template-columns:
+        42px
+        minmax(0, 1fr);
+
     gap: 12px;
+
     align-items: center;
+
+    overflow: hidden;
 }
 
 
 /* ============================================================
-   QUANDO A PARCERIA É FIXA PELA URL
+   PARCERIA FIXA PELA URL
 ============================================================ */
 
 .comparacao-campos.grupo-fixo {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns:
+        minmax(0, 1fr);
 }
 
-body[data-pagina="comparacao"] .comparacao-campos.grupo-fixo {
+
+body[data-pagina="comparacao"]
+.comparacao-campos.grupo-fixo {
     width: 100%;
 }
 
@@ -146,7 +273,8 @@ body[data-pagina="comparacao"] .comparacao-campos.grupo-fixo {
    SELECTS A E B
 ============================================================ */
 
-body[data-pagina="comparacao"] .campo-comparacao select {
+body[data-pagina="comparacao"]
+.campo-comparacao select {
     width: 100%;
     height: 34px;
 }
@@ -156,66 +284,104 @@ body[data-pagina="comparacao"] .campo-comparacao select {
    IDENTIFICADORES A / B
 ============================================================ */
 
-body[data-pagina="comparacao"] .comparacao-identificador {
+body[data-pagina="comparacao"]
+.comparacao-identificador {
     width: 38px;
     height: 38px;
-    flex: 0 0 38px;
+
+    flex:
+        0
+        0
+        38px;
 }
 
 
 /* ============================================================
-   CARD DE CONFIGURAÇÃO DA COMPARAÇÃO
-   removendo qualquer scroll interno
+   CONFIGURAÇÃO DA COMPARAÇÃO
 ============================================================ */
 
-body[data-pagina="comparacao"] .comparacao-configuracao {
+body[data-pagina="comparacao"]
+.comparacao-configuracao {
     height: 100%;
     min-width: 0;
-    padding: 10px 11px;
-    gap: 6px;
+
+    padding:
+        14px
+        12px;
+
+    gap: 8px;
+
     overflow: hidden;
-    justify-content: flex-start;
-    align-content: flex-start;
+
+    justify-content: center;
+    align-content: center;
 }
 
 
 /* ============================================================
-   CONTROLES INTERNOS DA CONFIGURAÇÃO
+   CONTROLES INTERNOS
 ============================================================ */
 
-body[data-pagina="comparacao"] .comparacao-raio-topo {
+body[data-pagina="comparacao"]
+.comparacao-raio-topo {
     min-height: 16px;
 }
 
-body[data-pagina="comparacao"] #comparacao-raio {
+
+body[data-pagina="comparacao"]
+#comparacao-raio {
     width: 100%;
+
     margin: 0;
 }
 
-body[data-pagina="comparacao"] .comparacao-escala {
+
+body[data-pagina="comparacao"]
+.comparacao-escala {
     margin-top: -2px;
 }
 
-body[data-pagina="comparacao"] #comparacao-criterio {
+
+body[data-pagina="comparacao"]
+#comparacao-criterio {
     height: 30px;
     min-height: 30px;
 }
 
-body[data-pagina="comparacao"] #botao-comparar {
-    height: 30px;
-    min-height: 30px;
+
+body[data-pagina="comparacao"]
+#botao-comparar {
+    display: none !important;
 }
 
 
 /* ============================================================
-   ÁREA PRINCIPAL
-   reajustada conforme a nova altura dos filtros
+   ÁREA PRINCIPAL DA COMPARAÇÃO
 ============================================================ */
 
-body[data-pagina="comparacao"] .comparacao-conteudo {
-    height: calc(100% - 62px - 136px - 12px);
+/*
+ * Antes descontávamos:
+ *
+ * 62px do cabeçalho
+ *
+ * Agora o cabeçalho não existe.
+ */
+
+body[data-pagina="comparacao"]
+.comparacao-conteudo {
+    height:
+        calc(
+            100%
+            - 136px
+            - 12px
+        );
+
     min-height: 0;
-    grid-template-columns: minmax(0, 1.25fr) minmax(360px, 0.95fr);
+
+    grid-template-columns:
+        minmax(0, 1.25fr)
+        minmax(360px, 0.95fr);
+
     gap: 12px;
 }
 
@@ -224,9 +390,13 @@ body[data-pagina="comparacao"] .comparacao-conteudo {
    PAINÉIS
 ============================================================ */
 
-body[data-pagina="comparacao"] .comparacao-painel-mapa,
-body[data-pagina="comparacao"] .comparacao-painel-indicadores {
+body[data-pagina="comparacao"]
+.comparacao-painel-mapa,
+
+body[data-pagina="comparacao"]
+.comparacao-painel-indicadores {
     height: 100%;
+
     min-width: 0;
     min-height: 0;
 }
@@ -238,34 +408,32 @@ body[data-pagina="comparacao"] .comparacao-painel-indicadores {
 
 #map-comparacao.mapa-iframe-container {
     position: relative;
+
     flex: 1;
+
     width: 100%;
-    height: auto;
+    height: 100%;
+
     min-width: 0;
     min-height: 0;
+
     overflow: hidden;
-    background: #e8ecee;
+
+    background:
+        #e8ecee;
 }
+
 
 #mapa-comparacao-iframe {
     display: block;
+
     width: 100%;
     height: 100%;
+
     margin: 0;
     padding: 0;
+
     border: 0;
-}
-
-
-/* ============================================================
-   CABEÇALHOS DOS PAINÉIS
-============================================================ */
-
-body[data-pagina="comparacao"] .comparacao-painel-mapa .titulo-painel,
-body[data-pagina="comparacao"] .comparacao-painel-indicadores .titulo-painel {
-    flex: 0 0 52px;
-    min-height: 52px;
-    padding: 8px 14px;
 }
 
 
@@ -273,9 +441,11 @@ body[data-pagina="comparacao"] .comparacao-painel-indicadores .titulo-painel {
    TABELA
 ============================================================ */
 
-body[data-pagina="comparacao"] .tabela-comparacao {
+body[data-pagina="comparacao"]
+.tabela-comparacao {
     min-width: 0;
     min-height: 0;
+
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -285,9 +455,11 @@ body[data-pagina="comparacao"] .tabela-comparacao {
    LEGENDA
 ============================================================ */
 
-body[data-pagina="comparacao"] .legenda-comparacao {
+body[data-pagina="comparacao"]
+.legenda-comparacao {
     left: 14px;
     bottom: 14px;
+
     z-index: 700;
 }
 
@@ -296,7 +468,10 @@ body[data-pagina="comparacao"] .legenda-comparacao {
    OUTRAS PÁGINAS
 ============================================================ */
 
-body:not([data-pagina="comparacao"]) .tab-panel {
+body:not(
+    [data-pagina="comparacao"]
+)
+.tab-panel {
     max-width: 100%;
 }
 
@@ -314,6 +489,7 @@ body,
 .comparacao-conteudo,
 .comparacao-filtros {
     max-width: 100%;
+
     overflow-x: hidden;
 }
 
@@ -322,62 +498,114 @@ body,
    RESPONSIVO
 ============================================================ */
 
-@media (max-width: 1150px) {
+@media (
+    max-width: 1150px
+) {
 
-    body[data-pagina="comparacao"] #tab-comparacao {
+    body[data-pagina="comparacao"]
+    #tab-comparacao {
         overflow-y: auto;
     }
 
-    body[data-pagina="comparacao"] .comparacao-filtros {
+
+    body[data-pagina="comparacao"]
+    .comparacao-filtros {
         height: auto;
         min-height: 0;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr);
     }
 
-    body[data-pagina="comparacao"] .comparacao-separador {
+
+    body[data-pagina="comparacao"]
+    .comparacao-separador {
         display: none;
     }
 
-    body[data-pagina="comparacao"] .comparacao-configuracao {
-        grid-column: 1 / -1;
-        min-height: 120px;
+
+    body[data-pagina="comparacao"]
+    .comparacao-configuracao {
+        grid-column:
+            1 / -1;
+
+        min-height:
+            120px;
     }
 
-    body[data-pagina="comparacao"] .comparacao-conteudo {
+
+    body[data-pagina="comparacao"]
+    .comparacao-conteudo {
         height: auto;
-        grid-template-columns: minmax(0, 1fr);
+
+        grid-template-columns:
+            minmax(0, 1fr);
     }
 
-    body[data-pagina="comparacao"] .comparacao-painel-mapa,
-    body[data-pagina="comparacao"] .comparacao-painel-indicadores {
-        min-height: 430px;
+
+    body[data-pagina="comparacao"]
+    .comparacao-painel-mapa,
+
+    body[data-pagina="comparacao"]
+    .comparacao-painel-indicadores {
+        min-height:
+            430px;
     }
+
 }
 
-@media (max-width: 900px) {
+
+@media (
+    max-width: 900px
+) {
+
     .filtros,
     .filtros.grupo-fixo {
         height: auto;
-        flex-basis: auto;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        flex-basis:
+            auto;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
     }
+
 }
 
-@media (max-width: 720px) {
+
+@media (
+    max-width: 720px
+) {
+
     .filtros,
     .filtros.grupo-fixo {
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns:
+            minmax(0, 1fr);
     }
 
-    body[data-pagina="comparacao"] .comparacao-filtros {
-        grid-template-columns: minmax(0, 1fr);
+
+    body[data-pagina="comparacao"]
+    .comparacao-filtros {
+        grid-template-columns:
+            minmax(0, 1fr);
     }
 
-    body[data-pagina="comparacao"] .comparacao-configuracao {
-        grid-column: auto;
+
+    body[data-pagina="comparacao"]
+    .comparacao-configuracao {
+        grid-column:
+            auto;
     }
 
-    body[data-pagina="comparacao"] .comparacao-campos {
-        grid-template-columns: minmax(0, 1fr);
+
+    body[data-pagina="comparacao"]
+    .comparacao-campos {
+        grid-template-columns:
+            minmax(0, 1fr);
     }
+
 }

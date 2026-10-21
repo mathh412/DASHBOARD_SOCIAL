@@ -9,6 +9,9 @@ const COR_COMPARACAO_A =
 const COR_COMPARACAO_B =
     "#3b7d95";
 
+const COR_PERIMETRO_SPP =
+    "#F08200";
+
 const DEBOUNCE_COMPARACAO =
     220;
 
@@ -202,6 +205,7 @@ function gruposPermitidosComparacao() {
     );
 }
 
+
 function gruposBaseComparacao() {
 
     const config =
@@ -221,6 +225,7 @@ function gruposBaseComparacao() {
         "todos"
     ];
 }
+
 
 function atualizarMapaBaseComparacao() {
 
@@ -303,8 +308,12 @@ function atualizarMapaBaseComparacao() {
         {
             grupo:
                 gruposFinais,
+
             local:
-                locaisFinais
+                locaisFinais,
+
+            nivel:
+                "perimetro"
         }
     );
 }
@@ -333,6 +342,7 @@ function criarGeoJSONSetoresComparacao(
     return {
         type:
             "FeatureCollection",
+
         features:
             resultado
                 .selecionados
@@ -340,8 +350,10 @@ function criarGeoJSONSetoresComparacao(
                     item => ({
                         type:
                             "Feature",
+
                         geometry:
                             item.feature.geometry,
+
                         properties: {
                             ...item.feature.properties
                         }
@@ -367,9 +379,8 @@ function desenharResultadoComparacao() {
 
     limparMapaComparacao();
 
-    // Antes de desenhar, faz o mapa base mostrar
-    // apenas os equipamentos A e B.
     atualizarMapaBaseComparacao();
+
 
     // ========================================================
     // SETORES A
@@ -380,30 +391,40 @@ function desenharResultadoComparacao() {
         {
             layer:
                 "comparacao-setores-a",
+
             tipo:
                 "geojson",
+
             pane:
                 "sppAnaliseSetores",
+
             interactive:
                 false,
+
             geojson:
                 criarGeoJSONSetoresComparacao(
                     resultadoComparacaoA
                 ),
+
             style: {
                 color:
                     "#ffffff",
+
                 weight:
                     0.45,
+
                 opacity:
                     0.8,
+
                 fillColor:
                     COR_COMPARACAO_A,
+
                 fillOpacity:
                     0.18
             }
         }
     );
+
 
     // ========================================================
     // SETORES B
@@ -414,30 +435,40 @@ function desenharResultadoComparacao() {
         {
             layer:
                 "comparacao-setores-b",
+
             tipo:
                 "geojson",
+
             pane:
                 "sppAnaliseSetores",
+
             interactive:
                 false,
+
             geojson:
                 criarGeoJSONSetoresComparacao(
                     resultadoComparacaoB
                 ),
+
             style: {
                 color:
                     "#ffffff",
+
                 weight:
                     0.45,
+
                 opacity:
                     0.8,
+
                 fillColor:
                     COR_COMPARACAO_B,
+
                 fillOpacity:
                     0.18
             }
         }
     );
+
 
     // ========================================================
     // BUFFER A
@@ -448,28 +479,38 @@ function desenharResultadoComparacao() {
         {
             layer:
                 "comparacao-buffer-a",
+
             tipo:
                 "buffer",
+
             geojson:
                 resultadoComparacaoA.buffer,
+
             fit:
                 false,
+
             style: {
                 color:
                     COR_COMPARACAO_A,
+
                 weight:
                     2,
+
                 opacity:
                     0.95,
+
                 dashArray:
                     "7 5",
+
                 fillColor:
                     COR_COMPARACAO_A,
+
                 fillOpacity:
                     0.035
             }
         }
     );
+
 
     // ========================================================
     // BUFFER B
@@ -480,28 +521,38 @@ function desenharResultadoComparacao() {
         {
             layer:
                 "comparacao-buffer-b",
+
             tipo:
                 "buffer",
+
             geojson:
                 resultadoComparacaoB.buffer,
+
             fit:
                 false,
+
             style: {
                 color:
                     COR_COMPARACAO_B,
+
                 weight:
                     2,
+
                 opacity:
                     0.95,
+
                 dashArray:
                     "7 5",
+
                 fillColor:
                     COR_COMPARACAO_B,
+
                 fillOpacity:
                     0.035
             }
         }
     );
+
 
     // ========================================================
     // PERÍMETRO A
@@ -512,28 +563,38 @@ function desenharResultadoComparacao() {
         {
             layer:
                 "comparacao-perimetro-a",
+
             tipo:
                 "geojson",
+
             pane:
                 "sppAnaliseFrente",
+
             interactive:
                 false,
+
             geojson:
                 resultadoComparacaoA.feature,
+
             style: {
                 color:
-                    COR_COMPARACAO_A,
+                    COR_PERIMETRO_SPP,
+
                 weight:
-                    3,
+                    4,
+
                 opacity:
                     1,
+
                 fillColor:
-                    COR_COMPARACAO_A,
+                    COR_PERIMETRO_SPP,
+
                 fillOpacity:
-                    0.28
+                    0.22
             }
         }
     );
+
 
     // ========================================================
     // PERÍMETRO B
@@ -544,28 +605,38 @@ function desenharResultadoComparacao() {
         {
             layer:
                 "comparacao-perimetro-b",
+
             tipo:
                 "geojson",
+
             pane:
                 "sppAnaliseFrente",
+
             interactive:
                 false,
+
             geojson:
                 resultadoComparacaoB.feature,
+
             style: {
                 color:
-                    COR_COMPARACAO_B,
+                    COR_PERIMETRO_SPP,
+
                 weight:
-                    3,
+                    4,
+
                 opacity:
                     1,
+
                 fillColor:
-                    COR_COMPARACAO_B,
+                    COR_PERIMETRO_SPP,
+
                 fillOpacity:
-                    0.28
+                    0.22
             }
         }
     );
+
 
     // ========================================================
     // ENQUADRAMENTO SOMENTE DE A + B
@@ -576,29 +647,39 @@ function desenharResultadoComparacao() {
         {
             layer:
                 "comparacao-enquadramento",
+
             tipo:
                 "geojson",
+
             interactive:
                 false,
+
             fit:
                 true,
+
             geojson: {
                 type:
                     "FeatureCollection",
+
                 features: [
                     resultadoComparacaoA.feature,
                     resultadoComparacaoB.feature
                 ]
             },
+
             style: {
                 color:
                     "transparent",
+
                 weight:
                     0,
+
                 opacity:
                     0,
+
                 fillColor:
                     "transparent",
+
                 fillOpacity:
                     0
             }
@@ -651,7 +732,9 @@ function preencherParceriasComparacao() {
             .filter(
                 item =>
                     Boolean(
-                        item[1]
+                        item[
+                            1
+                        ]
                     )
             )
             .sort(
@@ -659,13 +742,18 @@ function preencherParceriasComparacao() {
                     a,
                     b
                 ) =>
-                    a[1]
-                        .nome
-                        .localeCompare(
-                            b[1].nome,
-                            "pt-BR"
-                        )
+                    a[
+                        1
+                    ]
+                    .nome
+                    .localeCompare(
+                        b[
+                            1
+                        ].nome,
+                        "pt-BR"
+                    )
             );
+
 
     for (
         const select
@@ -674,8 +762,10 @@ function preencherParceriasComparacao() {
             comparacaoElementos.parceriaB
         ]
     ) {
+
         select.innerHTML =
-            '<option value="">Selecione</option>';
+            "";
+
 
         for (
             const [
@@ -684,22 +774,44 @@ function preencherParceriasComparacao() {
             ]
             of entradas
         ) {
+
             const option =
                 document.createElement(
                     "option"
                 );
 
+
             option.value =
                 codigo;
+
 
             option.textContent =
                 configuracao.nome;
 
+
             select.appendChild(
                 option
             );
+
         }
+
+
+        select.disabled =
+            entradas.length ===
+            0;
+
+
+        if (
+            select.options.length
+        ) {
+
+            select.selectedIndex =
+                0;
+
+        }
+
     }
+
 }
 
 
@@ -716,46 +828,60 @@ async function obterParceriaComparacao(
             codigo
         )
     ) {
+
         return cacheParceriasComparacao.get(
             codigo
         );
+
     }
+
 
     const configuracao =
         PARCERIAS[
             codigo
         ];
 
+
     if (
         !configuracao
     ) {
+
         throw new Error(
             "Parceria não encontrada."
         );
+
     }
+
 
     const resposta =
         await fetch(
             configuracao.arquivo
         );
 
+
     if (
         !resposta.ok
     ) {
+
         throw new Error(
             "Não foi possível carregar a parceria."
         );
+
     }
+
 
     const dados =
         await resposta.json();
+
 
     cacheParceriasComparacao.set(
         codigo,
         dados
     );
 
+
     return dados;
+
 }
 
 
@@ -769,57 +895,160 @@ function preencherLocaisComparacao(
 ) {
 
     select.innerHTML =
-        '<option value="">Selecione</option>';
+        "";
+
 
     const locais =
-        geojson.features
-            .map(
-                (
-                    feature,
-                    indice
-                ) => ({
-                    indice,
-                    nome:
-                        nomeDoLocal(
-                            feature
-                        )
-                })
-            )
-            .sort(
-                (
-                    a,
-                    b
-                ) =>
-                    a.nome.localeCompare(
-                        b.nome,
-                        "pt-BR"
+        (
+            geojson?.features
+            ||
+            []
+        )
+        .map(
+            (
+                feature,
+                indice
+            ) => ({
+
+                indice,
+
+                nome:
+                    nomeDoLocal(
+                        feature
                     )
-            );
+
+            })
+        )
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                a.nome.localeCompare(
+                    b.nome,
+                    "pt-BR"
+                )
+        );
+
 
     for (
         const local
         of locais
     ) {
+
         const option =
             document.createElement(
                 "option"
             );
+
 
         option.value =
             String(
                 local.indice
             );
 
+
         option.textContent =
             local.nome;
+
 
         select.appendChild(
             option
         );
+
     }
 
+
     select.disabled =
-        false;
+        locais.length ===
+        0;
+
+
+    if (
+        select.options.length
+    ) {
+
+        select.selectedIndex =
+            0;
+
+    }
+
+}
+
+
+// ============================================================
+// EQUIPAMENTOS INICIAIS DIFERENTES
+// ============================================================
+
+function garantirEquipamentosDiferentesComparacao() {
+
+    if (
+        !comparacaoElementos.localA
+        ||
+        !comparacaoElementos.localB
+    ) {
+
+        return;
+
+    }
+
+
+    const mesmoGrupo =
+        comparacaoElementos
+            .parceriaA
+            .value
+        ===
+        comparacaoElementos
+            .parceriaB
+            .value;
+
+
+    if (
+        !mesmoGrupo
+    ) {
+
+        return;
+
+    }
+
+
+    const mesmoEquipamento =
+        comparacaoElementos
+            .localA
+            .value
+        ===
+        comparacaoElementos
+            .localB
+            .value;
+
+
+    if (
+        !mesmoEquipamento
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        comparacaoElementos
+            .localB
+            .options
+            .length >
+        1
+    ) {
+
+        comparacaoElementos
+            .localB
+            .selectedIndex =
+                1;
+
+
+        alterarLocalComparacaoB();
+
+    }
+
 }
 
 
@@ -834,50 +1063,84 @@ async function alterarParceriaComparacaoA() {
             .parceriaA
             .value;
 
+
     featureComparacaoA =
         null;
+
 
     parceriaComparacaoA =
         null;
 
+
     resultadoComparacaoA =
         null;
+
 
     comparacaoElementos.localA.disabled =
         true;
 
+
     comparacaoElementos.localA.innerHTML =
-        '<option value="">Selecione</option>';
+        "";
+
 
     if (
         !codigo
     ) {
+
         verificarBotaoComparar();
         atualizarMapaBaseComparacao();
+
+
         return;
+
     }
 
+
     try {
+
         parceriaComparacaoA =
             await obterParceriaComparacao(
                 codigo
             );
 
+
         preencherLocaisComparacao(
             comparacaoElementos.localA,
             parceriaComparacaoA
         );
+
+
+        if (
+            comparacaoElementos
+                .localA
+                .options
+                .length
+        ) {
+
+            comparacaoElementos.localA.selectedIndex =
+                0;
+
+
+            alterarLocalComparacaoA();
+
+        }
+
     }
     catch (
         erro
     ) {
+
         console.error(
             erro
         );
+
     }
+
 
     verificarBotaoComparar();
     atualizarMapaBaseComparacao();
+
 }
 
 
@@ -892,50 +1155,84 @@ async function alterarParceriaComparacaoB() {
             .parceriaB
             .value;
 
+
     featureComparacaoB =
         null;
+
 
     parceriaComparacaoB =
         null;
 
+
     resultadoComparacaoB =
         null;
+
 
     comparacaoElementos.localB.disabled =
         true;
 
+
     comparacaoElementos.localB.innerHTML =
-        '<option value="">Selecione</option>';
+        "";
+
 
     if (
         !codigo
     ) {
+
         verificarBotaoComparar();
         atualizarMapaBaseComparacao();
+
+
         return;
+
     }
 
+
     try {
+
         parceriaComparacaoB =
             await obterParceriaComparacao(
                 codigo
             );
 
+
         preencherLocaisComparacao(
             comparacaoElementos.localB,
             parceriaComparacaoB
         );
+
+
+        if (
+            comparacaoElementos
+                .localB
+                .options
+                .length
+        ) {
+
+            comparacaoElementos.localB.selectedIndex =
+                0;
+
+
+            alterarLocalComparacaoB();
+
+        }
+
     }
     catch (
         erro
     ) {
+
         console.error(
             erro
         );
+
     }
+
 
     verificarBotaoComparar();
     atualizarMapaBaseComparacao();
+
 }
 
 
@@ -950,27 +1247,41 @@ function alterarLocalComparacaoA() {
             .localA
             .value;
 
+
     featureComparacaoA =
-        valor === ""
-            ? null
-            : parceriaComparacaoA
-                .features[
-                    Number(valor)
-                ];
+        valor ===
+            ""
+            ?
+            null
+            :
+            parceriaComparacaoA
+                ?.features[
+                    Number(
+                        valor
+                    )
+                ]
+            ||
+            null;
+
 
     resultadoComparacaoA =
         null;
 
+
     verificarBotaoComparar();
     atualizarMapaBaseComparacao();
+
 
     if (
         featureComparacaoA
         &&
         featureComparacaoB
     ) {
+
         agendarComparacao();
+
     }
+
 }
 
 
@@ -985,27 +1296,41 @@ function alterarLocalComparacaoB() {
             .localB
             .value;
 
+
     featureComparacaoB =
-        valor === ""
-            ? null
-            : parceriaComparacaoB
-                .features[
-                    Number(valor)
-                ];
+        valor ===
+            ""
+            ?
+            null
+            :
+            parceriaComparacaoB
+                ?.features[
+                    Number(
+                        valor
+                    )
+                ]
+            ||
+            null;
+
 
     resultadoComparacaoB =
         null;
 
+
     verificarBotaoComparar();
     atualizarMapaBaseComparacao();
+
 
     if (
         featureComparacaoA
         &&
         featureComparacaoB
     ) {
+
         agendarComparacao();
+
     }
+
 }
 
 
@@ -1022,13 +1347,18 @@ function verificarBotaoComparar() {
             featureComparacaoB
         );
 
+
     comparacaoElementos.botao.disabled =
         !valido;
 
+
     comparacaoElementos.status.textContent =
         valido
-            ? "Pronto para comparar"
-            : "Selecione dois equipamentos";
+            ?
+            "Pronto para comparar"
+            :
+            "Aguardando equipamentos";
+
 }
 
 
@@ -1045,18 +1375,23 @@ function atualizarRaioComparacao() {
                 .value
         );
 
+
     comparacaoElementos.raioValor.textContent =
         formatarRaio(
             valor
         );
+
 
     if (
         featureComparacaoA
         &&
         featureComparacaoB
     ) {
+
         agendarComparacao();
+
     }
+
 }
 
 
@@ -1070,11 +1405,13 @@ function agendarComparacao() {
         temporizadorComparacao
     );
 
+
     temporizadorComparacao =
         setTimeout(
             executarComparacao,
             DEBOUNCE_COMPARACAO
         );
+
 }
 
 
@@ -1090,33 +1427,43 @@ function calcularAreaSelecionada(
     let area =
         0;
 
+
     for (
         const item
         of selecionados
     ) {
+
         const dados =
             dadosDaFeature(
                 item.feature
             );
+
 
         const areaSetor =
             numero(
                 dados.area_km2
             );
 
+
         const fator =
             criterio ===
             "proporcional"
-                ? item.fator
-                : 1;
+                ?
+                item.fator
+                :
+                1;
+
 
         area +=
             areaSetor
             *
             fator;
+
     }
 
+
     return area;
+
 }
 
 
@@ -1132,11 +1479,15 @@ function calcularIPVSAlto(
     if (
         !total
     ) {
+
         return 0;
+
     }
+
 
     let alto =
         0;
+
 
     for (
         const [
@@ -1147,10 +1498,12 @@ function calcularIPVSAlto(
             contagem
         )
     ) {
+
         const chave =
             nome
                 .trim()
                 .toLowerCase();
+
 
         if (
             chave.includes(
@@ -1161,10 +1514,14 @@ function calcularIPVSAlto(
                 "vulnerabilidade muito alta"
             )
         ) {
+
             alto +=
                 quantidade;
+
         }
+
     }
+
 
     return (
         alto
@@ -1173,6 +1530,7 @@ function calcularIPVSAlto(
         *
         100
     );
+
 }
 
 
@@ -1197,9 +1555,12 @@ function calcularDerivadosComparacao(
         +
         resultado.indigena;
 
+
     const pretaParda =
-        totalRaca > 0
-            ? (
+        totalRaca >
+            0
+            ?
+            (
                 resultado.preta
                 +
                 resultado.parda
@@ -1208,30 +1569,41 @@ function calcularDerivadosComparacao(
             totalRaca
             *
             100
-            : 0;
+            :
+            0;
+
 
     const totalGenero =
         resultado.feminina
         +
         resultado.masculina;
 
+
     const feminina =
-        totalGenero > 0
-            ? resultado.feminina
-                /
-                totalGenero
-                *
-                100
-            : 0;
+        totalGenero >
+            0
+            ?
+            resultado.feminina
+            /
+            totalGenero
+            *
+            100
+            :
+            0;
+
 
     const coberturaIPVS =
-        resultado.setores > 0
-            ? resultado.setoresComIPVS
-                /
-                resultado.setores
-                *
-                100
-            : 0;
+        resultado.setores >
+            0
+            ?
+            resultado.setoresComIPVS
+            /
+            resultado.setores
+            *
+            100
+            :
+            0;
+
 
     const ipvsAlto =
         calcularIPVSAlto(
@@ -1239,18 +1611,24 @@ function calcularDerivadosComparacao(
             resultado.setoresComIPVS
         );
 
+
     const area =
         calcularAreaSelecionada(
             selecionados,
             criterio
         );
 
+
     const densidade =
-        area > 0
-            ? resultado.populacao
-                /
-                area
-            : 0;
+        area >
+            0
+            ?
+            resultado.populacao
+            /
+            area
+            :
+            0;
+
 
     return {
         pretaParda,
@@ -1260,6 +1638,7 @@ function calcularDerivadosComparacao(
         area,
         densidade
     };
+
 }
 
 
@@ -1279,17 +1658,20 @@ function calcularEmpreendimentoComparacao(
             raio
         );
 
+
     const selecionados =
         selecionarSetores(
             buffer,
             criterio
         );
 
+
     const resultadoIndicadores =
         calcularIndicadoresSelecionados(
             selecionados,
             criterio
         );
+
 
     const derivados =
         calcularDerivadosComparacao(
@@ -1298,14 +1680,18 @@ function calcularEmpreendimentoComparacao(
             criterio
         );
 
+
     return {
         feature,
         buffer,
         selecionados,
+
         indicadores:
             resultadoIndicadores,
+
         derivados
     };
+
 }
 
 
@@ -1317,31 +1703,48 @@ function diferencaAbsoluta(
     a,
     b
 ) {
+
     return (
-        numero(b)
+        numero(
+            b
+        )
         -
-        numero(a)
+        numero(
+            a
+        )
     );
+
 }
+
 
 function classeDiferenca(
     valor
 ) {
 
     if (
-        valor > 0
+        valor >
+        0
     ) {
+
         return "positiva";
+
     }
+
 
     if (
-        valor < 0
+        valor <
+        0
     ) {
+
         return "negativa";
+
     }
 
+
     return "";
+
 }
+
 
 function formatarSinal(
     valor,
@@ -1353,21 +1756,31 @@ function formatarSinal(
             valor
         );
 
-    if (
-        n > 0
-    ) {
-        return `+${formatador(n)}`;
-    }
 
     if (
-        n < 0
+        n >
+        0
     ) {
-        return `−${formatador(Math.abs(n))}`;
+
+        return `+${formatador(n)}`;
+
     }
+
+
+    if (
+        n <
+        0
+    ) {
+
+        return `−${formatador(Math.abs(n))}`;
+
+    }
+
 
     return formatador(
         0
     );
+
 }
 
 
@@ -1389,21 +1802,26 @@ function linhaComparacao(
             valorB
         );
 
+
     const textoDiferenca =
         tipo ===
-        "percentual"
-            ? formatarSinal(
+            "percentual"
+            ?
+            formatarSinal(
                 diferenca,
                 valor =>
                     `${formatarNumero(valor, 1)} p.p.`
             )
-            : formatarSinal(
+            :
+            formatarSinal(
                 diferenca,
                 formatador
             );
 
+
     return `
         <div class="comparacao-linha">
+
             <div class="comparacao-metrica">
                 ${titulo}
             </div>
@@ -1416,11 +1834,18 @@ function linhaComparacao(
                 ${formatador(valorB)}
             </div>
 
-            <div class="comparacao-diferenca ${classeDiferenca(diferenca)}">
+            <div
+                class="
+                    comparacao-diferenca
+                    ${classeDiferenca(diferenca)}
+                "
+            >
                 ${textoDiferenca}
             </div>
+
         </div>
     `;
+
 }
 
 
@@ -1441,12 +1866,14 @@ function miniComparacao(
             1
         );
 
+
     const larguraA =
         valorA
         /
         maximo
         *
         100;
+
 
     const larguraB =
         valorB
@@ -1455,47 +1882,65 @@ function miniComparacao(
         *
         100;
 
+
     return `
         <div class="mini-comparacao">
+
             <div class="mini-comparacao-titulo">
                 ${titulo}
             </div>
 
             <div class="mini-comparacao-linha">
+
                 <div class="mini-comparacao-letra a">
                     A
                 </div>
 
                 <div class="mini-comparacao-trilho">
+
                     <div
                         class="mini-comparacao-barra a"
-                        style="width:${larguraA}%;"
+                        style="
+                            width:
+                            ${larguraA}%;
+                        "
                     ></div>
+
                 </div>
 
                 <div class="mini-comparacao-valor">
                     ${formatarPercentual(valorA)}
                 </div>
+
             </div>
 
             <div class="mini-comparacao-linha">
+
                 <div class="mini-comparacao-letra b">
                     B
                 </div>
 
                 <div class="mini-comparacao-trilho">
+
                     <div
                         class="mini-comparacao-barra b"
-                        style="width:${larguraB}%;"
+                        style="
+                            width:
+                            ${larguraB}%;
+                        "
                     ></div>
+
                 </div>
 
                 <div class="mini-comparacao-valor">
                     ${formatarPercentual(valorB)}
                 </div>
+
             </div>
+
         </div>
     `;
+
 }
 
 
@@ -1508,66 +1953,96 @@ function renderizarTabelaComparacao() {
     const a =
         resultadoComparacaoA;
 
+
     const b =
         resultadoComparacaoB;
+
 
     if (
         !a
         ||
         !b
     ) {
+
         return;
+
     }
+
 
     const nomeA =
         nomeDoLocal(
             a.feature
         );
 
+
     const nomeB =
         nomeDoLocal(
             b.feature
         );
 
+
     comparacaoElementos.nomeA.textContent =
         nomeA;
+
 
     comparacaoElementos.nomeB.textContent =
         nomeB;
 
+
     const ia =
         a.indicadores;
+
 
     const ib =
         b.indicadores;
 
+
     const da =
         a.derivados;
+
 
     const db =
         b.derivados;
 
+
     comparacaoElementos.tabela.innerHTML = `
         <div class="comparacao-tabela-cabecalho">
+
             <div></div>
 
             <div class="comparacao-cabecalho-local">
-                <span>A</span>
+
+                <span>
+                    A
+                </span>
+
                 <strong title="${nomeA}">
                     ${nomeA}
                 </strong>
+
             </div>
 
-            <div class="comparacao-cabecalho-local local-b">
-                <span>B</span>
+            <div
+                class="
+                    comparacao-cabecalho-local
+                    local-b
+                "
+            >
+
+                <span>
+                    B
+                </span>
+
                 <strong title="${nomeB}">
                     ${nomeB}
                 </strong>
+
             </div>
 
             <div class="comparacao-col-diferenca">
                 B − A
             </div>
+
         </div>
 
         ${linhaComparacao(
@@ -1616,6 +2091,7 @@ function renderizarTabelaComparacao() {
         )}
 
         <div class="comparacao-bloco-percentuais">
+
             <h3>
                 Composição territorial
             </h3>
@@ -1637,8 +2113,10 @@ function renderizarTabelaComparacao() {
                 da.ipvsAlto,
                 db.ipvsAlto
             )}
+
         </div>
     `;
+
 }
 
 
@@ -1653,18 +2131,26 @@ function executarComparacao() {
         ||
         !featureComparacaoB
     ) {
+
         return;
+
     }
+
 
     if (
         !indiceSetores?.length
         ||
         !indicadores
     ) {
+
         comparacaoElementos.status.textContent =
             "Aguardando dados territoriais...";
+
+
         return;
+
     }
+
 
     const raio =
         Number(
@@ -1673,24 +2159,30 @@ function executarComparacao() {
                 .value
         );
 
+
     const criterio =
         comparacaoElementos
             .criterio
             .value;
 
+
     comparacaoElementos.status.textContent =
         "Calculando comparação...";
+
 
     const inicio =
         performance.now();
 
+
     try {
+
         resultadoComparacaoA =
             calcularEmpreendimentoComparacao(
                 featureComparacaoA,
                 raio,
                 criterio
             );
+
 
         resultadoComparacaoB =
             calcularEmpreendimentoComparacao(
@@ -1699,28 +2191,37 @@ function executarComparacao() {
                 criterio
             );
 
+
         desenharResultadoComparacao();
 
+
         renderizarTabelaComparacao();
+
 
         const tempo =
             performance.now()
             -
             inicio;
 
+
         comparacaoElementos.status.textContent =
             `Comparação concluída • ${Math.round(tempo)} ms`;
+
     }
     catch (
         erro
     ) {
+
         console.error(
             erro
         );
 
+
         comparacaoElementos.status.textContent =
             "Erro ao calcular comparação";
+
     }
+
 }
 
 
@@ -1733,20 +2234,28 @@ async function aplicarGrupoFixoComparacao() {
     const config =
         window.SPPDashboardURL;
 
+
     if (
         !config
     ) {
-        return;
+
+        return false;
+
     }
+
 
     const grupo =
         config.obterGrupoUnico();
 
+
     if (
         !grupo
     ) {
-        return;
+
+        return false;
+
     }
+
 
     comparacaoElementos
         .campoParceriaA
@@ -1755,12 +2264,14 @@ async function aplicarGrupoFixoComparacao() {
             "url-oculto"
         );
 
+
     comparacaoElementos
         .campoParceriaB
         ?.classList
         .add(
             "url-oculto"
         );
+
 
     comparacaoElementos
         .camposA
@@ -1769,6 +2280,7 @@ async function aplicarGrupoFixoComparacao() {
             "grupo-fixo"
         );
 
+
     comparacaoElementos
         .camposB
         ?.classList
@@ -1776,16 +2288,29 @@ async function aplicarGrupoFixoComparacao() {
             "grupo-fixo"
         );
 
+
     comparacaoElementos.parceriaA.value =
         grupo;
+
 
     comparacaoElementos.parceriaB.value =
         grupo;
 
+
     await Promise.all([
+
         alterarParceriaComparacaoA(),
+
         alterarParceriaComparacaoB()
+
     ]);
+
+
+    garantirEquipamentosDiferentesComparacao();
+
+
+    return true;
+
 }
 
 
@@ -1795,48 +2320,73 @@ async function aplicarGrupoFixoComparacao() {
 
 function registrarEventosComparacao() {
 
-    comparacaoElementos.parceriaA.addEventListener(
-        "change",
-        alterarParceriaComparacaoA
-    );
+    comparacaoElementos
+        .parceriaA
+        .addEventListener(
+            "change",
+            alterarParceriaComparacaoA
+        );
 
-    comparacaoElementos.parceriaB.addEventListener(
-        "change",
-        alterarParceriaComparacaoB
-    );
 
-    comparacaoElementos.localA.addEventListener(
-        "change",
-        alterarLocalComparacaoA
-    );
+    comparacaoElementos
+        .parceriaB
+        .addEventListener(
+            "change",
+            alterarParceriaComparacaoB
+        );
 
-    comparacaoElementos.localB.addEventListener(
-        "change",
-        alterarLocalComparacaoB
-    );
 
-    comparacaoElementos.raio.addEventListener(
-        "input",
-        atualizarRaioComparacao
-    );
+    comparacaoElementos
+        .localA
+        .addEventListener(
+            "change",
+            alterarLocalComparacaoA
+        );
 
-    comparacaoElementos.criterio.addEventListener(
-        "change",
-        () => {
-            if (
-                featureComparacaoA
-                &&
-                featureComparacaoB
-            ) {
-                agendarComparacao();
+
+    comparacaoElementos
+        .localB
+        .addEventListener(
+            "change",
+            alterarLocalComparacaoB
+        );
+
+
+    comparacaoElementos
+        .raio
+        .addEventListener(
+            "input",
+            atualizarRaioComparacao
+        );
+
+
+    comparacaoElementos
+        .criterio
+        .addEventListener(
+            "change",
+            () => {
+
+                if (
+                    featureComparacaoA
+                    &&
+                    featureComparacaoB
+                ) {
+
+                    agendarComparacao();
+
+                }
+
             }
-        }
-    );
+        );
 
-    comparacaoElementos.botao.addEventListener(
-        "click",
-        executarComparacao
-    );
+
+    comparacaoElementos
+        .botao
+        .addEventListener(
+            "click",
+            executarComparacao
+        );
+
 }
 
 
@@ -1849,11 +2399,15 @@ function registrarEventosMapaComparacao() {
     const iframe =
         comparacaoElementos.iframe;
 
+
     if (
         !iframe
     ) {
+
         return;
+
     }
+
 
     window.addEventListener(
         "message",
@@ -1863,18 +2417,25 @@ function registrarEventosMapaComparacao() {
                 event.source !==
                 iframe.contentWindow
             ) {
+
                 return;
+
             }
+
 
             if (
                 event.origin !==
                 MAPA_COMPARACAO_ORIGIN
             ) {
+
                 return;
+
             }
+
 
             const mensagem =
                 event.data;
+
 
             if (
                 !mensagem
@@ -1882,15 +2443,20 @@ function registrarEventosMapaComparacao() {
                 mensagem.source !==
                     "spp-mapa"
             ) {
+
                 return;
+
             }
+
 
             if (
                 mensagem.type ===
                 "map-ready"
             ) {
+
                 mapaComparacaoPronto =
                     true;
+
 
                 comparacaoElementos
                     .loading
@@ -1899,23 +2465,28 @@ function registrarEventosMapaComparacao() {
                         "oculto"
                     );
 
-                // Assim que o mapa ficar pronto,
-                // já aplica o filtro base correto.
+
                 atualizarMapaBaseComparacao();
+
 
                 if (
                     resultadoComparacaoA
                     &&
                     resultadoComparacaoB
                 ) {
+
                     setTimeout(
                         desenharResultadoComparacao,
                         100
                     );
+
                 }
+
             }
+
         }
     );
+
 
     iframe.addEventListener(
         "load",
@@ -1924,6 +2495,7 @@ function registrarEventosMapaComparacao() {
             mapaComparacaoPronto =
                 false;
 
+
             comparacaoElementos
                 .loading
                 ?.classList
@@ -1931,25 +2503,33 @@ function registrarEventosMapaComparacao() {
                     "oculto"
                 );
 
+
             setTimeout(
                 () => {
+
                     enviarParaMapaComparacao(
                         "ping"
                     );
+
                 },
                 150
             );
+
         }
     );
 
+
     setTimeout(
         () => {
+
             enviarParaMapaComparacao(
                 "ping"
             );
+
         },
         500
     );
+
 }
 
 
@@ -1962,26 +2542,66 @@ async function iniciarComparacao() {
     const config =
         window.SPPDashboardURL;
 
+
     if (
         config
         &&
         config.pagina !==
             "comparacao"
     ) {
+
         return;
+
     }
+
 
     carregarElementosComparacao();
 
+
     preencherParceriasComparacao();
+
 
     registrarEventosComparacao();
 
+
     registrarEventosMapaComparacao();
+
 
     atualizarRaioComparacao();
 
-    await aplicarGrupoFixoComparacao();
+
+    const grupoFixoAplicado =
+        await aplicarGrupoFixoComparacao();
+
+
+    if (
+        !grupoFixoAplicado
+    ) {
+
+        await Promise.all([
+
+            alterarParceriaComparacaoA(),
+
+            alterarParceriaComparacaoB()
+
+        ]);
+
+
+        garantirEquipamentosDiferentesComparacao();
+
+    }
+
+
+    if (
+        featureComparacaoA
+        &&
+        featureComparacaoB
+    ) {
+
+        agendarComparacao();
+
+    }
+
 }
 
 
