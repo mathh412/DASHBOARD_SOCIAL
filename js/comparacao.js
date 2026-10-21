@@ -166,14 +166,18 @@ function enviarParaMapaComparacao(
         ||
         !iframe.contentWindow
     ) {
+
         return;
+
     }
 
     iframe.contentWindow.postMessage(
         {
             source:
                 "spp-dashboard",
+
             type,
+
             ...dados
         },
         MAPA_COMPARACAO_ORIGIN
@@ -196,8 +200,10 @@ function gruposPermitidosComparacao() {
         typeof config.obterCodigosPermitidos ===
             "function"
     ) {
+
         return config
             .obterCodigosPermitidos();
+
     }
 
     return Object.keys(
@@ -217,8 +223,10 @@ function gruposBaseComparacao() {
         typeof config.obterGruposParaMapa ===
             "function"
     ) {
+
         return config
             .obterGruposParaMapa();
+
     }
 
     return [
@@ -232,8 +240,11 @@ function atualizarMapaBaseComparacao() {
     if (
         !mapaComparacaoPronto
     ) {
+
         return;
+
     }
+
 
     const gruposSelecionados =
         [];
@@ -241,11 +252,13 @@ function atualizarMapaBaseComparacao() {
     const locaisSelecionados =
         [];
 
+
     const grupoA =
         comparacaoElementos
             .parceriaA
             ?.value
             ?.trim();
+
 
     const grupoB =
         comparacaoElementos
@@ -253,11 +266,13 @@ function atualizarMapaBaseComparacao() {
             ?.value
             ?.trim();
 
+
     if (
         featureComparacaoA
         &&
         grupoA
     ) {
+
         gruposSelecionados.push(
             grupoA
         );
@@ -267,13 +282,16 @@ function atualizarMapaBaseComparacao() {
                 featureComparacaoA
             )
         );
+
     }
+
 
     if (
         featureComparacaoB
         &&
         grupoB
     ) {
+
         gruposSelecionados.push(
             grupoB
         );
@@ -283,29 +301,38 @@ function atualizarMapaBaseComparacao() {
                 featureComparacaoB
             )
         );
+
     }
+
 
     const gruposFinais =
         gruposSelecionados.length
-            ? [
+            ?
+            [
                 ...new Set(
                     gruposSelecionados
                 )
             ]
-            : gruposBaseComparacao();
+            :
+            gruposBaseComparacao();
+
 
     const locaisFinais =
         locaisSelecionados.length
-            ? [
+            ?
+            [
                 ...new Set(
                     locaisSelecionados
                 )
             ]
-            : [];
+            :
+            [];
+
 
     enviarParaMapaComparacao(
         "set-filters",
         {
+
             grupo:
                 gruposFinais,
 
@@ -314,6 +341,7 @@ function atualizarMapaBaseComparacao() {
 
             nivel:
                 "perimetro"
+
         }
     );
 }
@@ -340,6 +368,7 @@ function criarGeoJSONSetoresComparacao(
 ) {
 
     return {
+
         type:
             "FeatureCollection",
 
@@ -348,6 +377,7 @@ function criarGeoJSONSetoresComparacao(
                 .selecionados
                 .map(
                     item => ({
+
                         type:
                             "Feature",
 
@@ -357,8 +387,10 @@ function criarGeoJSONSetoresComparacao(
                         properties: {
                             ...item.feature.properties
                         }
+
                     })
                 )
+
     };
 }
 
@@ -374,8 +406,11 @@ function desenharResultadoComparacao() {
         ||
         !resultadoComparacaoB
     ) {
+
         return;
+
     }
+
 
     limparMapaComparacao();
 
@@ -389,6 +424,7 @@ function desenharResultadoComparacao() {
     enviarParaMapaComparacao(
         "set-analysis-layer",
         {
+
             layer:
                 "comparacao-setores-a",
 
@@ -407,6 +443,7 @@ function desenharResultadoComparacao() {
                 ),
 
             style: {
+
                 color:
                     "#ffffff",
 
@@ -421,7 +458,9 @@ function desenharResultadoComparacao() {
 
                 fillOpacity:
                     0.18
+
             }
+
         }
     );
 
@@ -433,6 +472,7 @@ function desenharResultadoComparacao() {
     enviarParaMapaComparacao(
         "set-analysis-layer",
         {
+
             layer:
                 "comparacao-setores-b",
 
@@ -451,6 +491,7 @@ function desenharResultadoComparacao() {
                 ),
 
             style: {
+
                 color:
                     "#ffffff",
 
@@ -465,7 +506,9 @@ function desenharResultadoComparacao() {
 
                 fillOpacity:
                     0.18
+
             }
+
         }
     );
 
@@ -477,6 +520,7 @@ function desenharResultadoComparacao() {
     enviarParaMapaComparacao(
         "set-analysis-layer",
         {
+
             layer:
                 "comparacao-buffer-a",
 
@@ -490,6 +534,7 @@ function desenharResultadoComparacao() {
                 false,
 
             style: {
+
                 color:
                     COR_COMPARACAO_A,
 
@@ -507,7 +552,9 @@ function desenharResultadoComparacao() {
 
                 fillOpacity:
                     0.035
+
             }
+
         }
     );
 
@@ -519,6 +566,7 @@ function desenharResultadoComparacao() {
     enviarParaMapaComparacao(
         "set-analysis-layer",
         {
+
             layer:
                 "comparacao-buffer-b",
 
@@ -532,6 +580,7 @@ function desenharResultadoComparacao() {
                 false,
 
             style: {
+
                 color:
                     COR_COMPARACAO_B,
 
@@ -549,7 +598,9 @@ function desenharResultadoComparacao() {
 
                 fillOpacity:
                     0.035
+
             }
+
         }
     );
 
@@ -561,6 +612,7 @@ function desenharResultadoComparacao() {
     enviarParaMapaComparacao(
         "set-analysis-layer",
         {
+
             layer:
                 "comparacao-perimetro-a",
 
@@ -577,6 +629,7 @@ function desenharResultadoComparacao() {
                 resultadoComparacaoA.feature,
 
             style: {
+
                 color:
                     COR_PERIMETRO_SPP,
 
@@ -591,7 +644,9 @@ function desenharResultadoComparacao() {
 
                 fillOpacity:
                     0.22
+
             }
+
         }
     );
 
@@ -603,6 +658,7 @@ function desenharResultadoComparacao() {
     enviarParaMapaComparacao(
         "set-analysis-layer",
         {
+
             layer:
                 "comparacao-perimetro-b",
 
@@ -619,6 +675,7 @@ function desenharResultadoComparacao() {
                 resultadoComparacaoB.feature,
 
             style: {
+
                 color:
                     COR_PERIMETRO_SPP,
 
@@ -633,18 +690,21 @@ function desenharResultadoComparacao() {
 
                 fillOpacity:
                     0.22
+
             }
+
         }
     );
 
 
     // ========================================================
-    // ENQUADRAMENTO SOMENTE DE A + B
+    // ENQUADRAMENTO
     // ========================================================
 
     enviarParaMapaComparacao(
         "set-analysis-layer",
         {
+
             layer:
                 "comparacao-enquadramento",
 
@@ -658,16 +718,22 @@ function desenharResultadoComparacao() {
                 true,
 
             geojson: {
+
                 type:
                     "FeatureCollection",
 
                 features: [
+
                     resultadoComparacaoA.feature,
+
                     resultadoComparacaoB.feature
+
                 ]
+
             },
 
             style: {
+
                 color:
                     "transparent",
 
@@ -682,7 +748,9 @@ function desenharResultadoComparacao() {
 
                 fillOpacity:
                     0
+
             }
+
         }
     );
 }
@@ -697,19 +765,187 @@ function codigosParceriasComparacao() {
     const config =
         window.SPPDashboardURL;
 
+
     if (
         config
         &&
         typeof config.obterCodigosPermitidos ===
             "function"
     ) {
+
         return config
             .obterCodigosPermitidos();
+
     }
+
 
     return Object.keys(
         PARCERIAS
     );
+}
+
+
+// ============================================================
+// CONTROLE DE RESTRIÇÕES
+// ============================================================
+
+let sincronizandoRestricoesParceriasComparacao =
+    false;
+
+
+// ============================================================
+// ENTRADAS DE PARCERIAS
+// ============================================================
+
+function obterEntradasParceriasComparacao(
+    codigoExcluido = ""
+) {
+
+    return codigosParceriasComparacao()
+        .filter(
+            codigo =>
+                codigo !==
+                codigoExcluido
+        )
+        .map(
+            codigo => [
+
+                codigo,
+
+                PARCERIAS[
+                    codigo
+                ]
+
+            ]
+        )
+        .filter(
+            item =>
+                Boolean(
+                    item[
+                        1
+                    ]
+                )
+        )
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                a[
+                    1
+                ]
+                .nome
+                .localeCompare(
+                    b[
+                        1
+                    ].nome,
+                    "pt-BR"
+                )
+        );
+}
+
+
+// ============================================================
+// PREENCHER SELECT DE PARCERIAS
+// ============================================================
+
+function preencherSelectParceriasComparacao(
+    select,
+    codigoExcluido = "",
+    valorPreferido = ""
+) {
+
+    if (
+        !select
+    ) {
+
+        return "";
+
+    }
+
+
+    const entradas =
+        obterEntradasParceriasComparacao(
+            codigoExcluido
+        );
+
+
+    select.innerHTML =
+        "";
+
+
+    for (
+        const [
+            codigo,
+            configuracao
+        ]
+        of entradas
+    ) {
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+
+        option.value =
+            codigo;
+
+
+        option.textContent =
+            configuracao.nome;
+
+
+        select.appendChild(
+            option
+        );
+
+    }
+
+
+    select.disabled =
+        entradas.length ===
+        0;
+
+
+    if (
+        !select.options.length
+    ) {
+
+        return "";
+
+    }
+
+
+    const valorPreferidoExiste =
+        Array
+            .from(
+                select.options
+            )
+            .some(
+                option =>
+                    option.value ===
+                    valorPreferido
+            );
+
+
+    if (
+        valorPreferidoExiste
+    ) {
+
+        select.value =
+            valorPreferido;
+
+    }
+    else {
+
+        select.selectedIndex =
+            0;
+
+    }
+
+
+    return select.value;
 }
 
 
@@ -719,99 +955,14 @@ function codigosParceriasComparacao() {
 
 function preencherParceriasComparacao() {
 
-    const entradas =
-        codigosParceriasComparacao()
-            .map(
-                codigo => [
-                    codigo,
-                    PARCERIAS[
-                        codigo
-                    ]
-                ]
-            )
-            .filter(
-                item =>
-                    Boolean(
-                        item[
-                            1
-                        ]
-                    )
-            )
-            .sort(
-                (
-                    a,
-                    b
-                ) =>
-                    a[
-                        1
-                    ]
-                    .nome
-                    .localeCompare(
-                        b[
-                            1
-                        ].nome,
-                        "pt-BR"
-                    )
-            );
+    preencherSelectParceriasComparacao(
+        comparacaoElementos.parceriaA
+    );
 
 
-    for (
-        const select
-        of [
-            comparacaoElementos.parceriaA,
-            comparacaoElementos.parceriaB
-        ]
-    ) {
-
-        select.innerHTML =
-            "";
-
-
-        for (
-            const [
-                codigo,
-                configuracao
-            ]
-            of entradas
-        ) {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-
-            option.value =
-                codigo;
-
-
-            option.textContent =
-                configuracao.nome;
-
-
-            select.appendChild(
-                option
-            );
-
-        }
-
-
-        select.disabled =
-            entradas.length ===
-            0;
-
-
-        if (
-            select.options.length
-        ) {
-
-            select.selectedIndex =
-                0;
-
-        }
-
-    }
-
+    preencherSelectParceriasComparacao(
+        comparacaoElementos.parceriaB
+    );
 }
 
 
@@ -881,7 +1032,35 @@ async function obterParceriaComparacao(
 
 
     return dados;
+}
 
+
+// ============================================================
+// QUANTIDADE DE EQUIPAMENTOS
+// ============================================================
+
+function quantidadeEquipamentosParceriaComparacao(
+    geojson
+) {
+
+    return Array.isArray(
+        geojson?.features
+    )
+        ?
+        geojson.features.length
+        :
+        0;
+}
+
+
+function parceriaComparacaoTemUmEquipamento(
+    geojson
+) {
+
+    return quantidadeEquipamentosParceriaComparacao(
+        geojson
+    ) ===
+        1;
 }
 
 
@@ -972,12 +1151,11 @@ function preencherLocaisComparacao(
             0;
 
     }
-
 }
 
 
 // ============================================================
-// EQUIPAMENTOS INICIAIS DIFERENTES
+// EQUIPAMENTOS DIFERENTES
 // ============================================================
 
 function garantirEquipamentosDiferentesComparacao() {
@@ -1048,7 +1226,197 @@ function garantirEquipamentosDiferentesComparacao() {
         alterarLocalComparacaoB();
 
     }
+}
 
+
+// ============================================================
+// SINCRONIZAR RESTRIÇÕES ENTRE A E B
+// ============================================================
+//
+// REGRA:
+//
+// Se a parceria de A possuir somente 1 equipamento:
+//
+//      parceria A não aparece no select de B
+//
+// Se a parceria de B possuir somente 1 equipamento:
+//
+//      parceria B não aparece no select de A
+//
+// Se possuir 2 ou mais equipamentos:
+//
+//      a parceria pode aparecer dos dois lados.
+//
+// ============================================================
+
+async function sincronizarRestricoesParceriasComparacao() {
+
+    if (
+        sincronizandoRestricoesParceriasComparacao
+    ) {
+
+        return;
+
+    }
+
+
+    sincronizandoRestricoesParceriasComparacao =
+        true;
+
+
+    try {
+
+        /*
+         * Uma troca automática pode causar uma nova
+         * restrição no lado oposto.
+         *
+         * Repetimos até estabilizar.
+         */
+
+        for (
+            let tentativa = 0;
+            tentativa < 6;
+            tentativa++
+        ) {
+
+            let houveMudanca =
+                false;
+
+
+            // =================================================
+            // A RESTRINGE B
+            // =================================================
+
+            const codigoA =
+                comparacaoElementos
+                    .parceriaA
+                    .value;
+
+
+            const bloquearEmB =
+                codigoA
+                &&
+                parceriaComparacaoTemUmEquipamento(
+                    parceriaComparacaoA
+                )
+                    ?
+                    codigoA
+                    :
+                    "";
+
+
+            const valorAnteriorB =
+                comparacaoElementos
+                    .parceriaB
+                    .value;
+
+
+            const novoValorB =
+                preencherSelectParceriasComparacao(
+                    comparacaoElementos.parceriaB,
+                    bloquearEmB,
+                    valorAnteriorB
+                );
+
+
+            if (
+                novoValorB !==
+                    valorAnteriorB
+            ) {
+
+                houveMudanca =
+                    true;
+
+
+                await alterarParceriaComparacaoB(
+                    {
+
+                        sincronizarRestricoes:
+                            false
+
+                    }
+                );
+
+            }
+
+
+            // =================================================
+            // B RESTRINGE A
+            // =================================================
+
+            const codigoB =
+                comparacaoElementos
+                    .parceriaB
+                    .value;
+
+
+            const bloquearEmA =
+                codigoB
+                &&
+                parceriaComparacaoTemUmEquipamento(
+                    parceriaComparacaoB
+                )
+                    ?
+                    codigoB
+                    :
+                    "";
+
+
+            const valorAnteriorA =
+                comparacaoElementos
+                    .parceriaA
+                    .value;
+
+
+            const novoValorA =
+                preencherSelectParceriasComparacao(
+                    comparacaoElementos.parceriaA,
+                    bloquearEmA,
+                    valorAnteriorA
+                );
+
+
+            if (
+                novoValorA !==
+                    valorAnteriorA
+            ) {
+
+                houveMudanca =
+                    true;
+
+
+                await alterarParceriaComparacaoA(
+                    {
+
+                        sincronizarRestricoes:
+                            false
+
+                    }
+                );
+
+            }
+
+
+            if (
+                !houveMudanca
+            ) {
+
+                break;
+
+            }
+
+        }
+
+
+        garantirEquipamentosDiferentesComparacao();
+
+    }
+    finally {
+
+        sincronizandoRestricoesParceriasComparacao =
+            false;
+
+    }
 }
 
 
@@ -1056,7 +1424,14 @@ function garantirEquipamentosDiferentesComparacao() {
 // PARCERIA A
 // ============================================================
 
-async function alterarParceriaComparacaoA() {
+async function alterarParceriaComparacaoA(
+    opcoes = {}
+) {
+
+    const deveSincronizarRestricoes =
+        opcoes?.sincronizarRestricoes !==
+        false;
+
 
     const codigo =
         comparacaoElementos
@@ -1089,7 +1464,17 @@ async function alterarParceriaComparacaoA() {
     ) {
 
         verificarBotaoComparar();
+
         atualizarMapaBaseComparacao();
+
+
+        if (
+            deveSincronizarRestricoes
+        ) {
+
+            await sincronizarRestricoesParceriasComparacao();
+
+        }
 
 
         return;
@@ -1118,8 +1503,10 @@ async function alterarParceriaComparacaoA() {
                 .length
         ) {
 
-            comparacaoElementos.localA.selectedIndex =
-                0;
+            comparacaoElementos
+                .localA
+                .selectedIndex =
+                    0;
 
 
             alterarLocalComparacaoA();
@@ -1138,9 +1525,18 @@ async function alterarParceriaComparacaoA() {
     }
 
 
-    verificarBotaoComparar();
-    atualizarMapaBaseComparacao();
+    if (
+        deveSincronizarRestricoes
+    ) {
 
+        await sincronizarRestricoesParceriasComparacao();
+
+    }
+
+
+    verificarBotaoComparar();
+
+    atualizarMapaBaseComparacao();
 }
 
 
@@ -1148,7 +1544,14 @@ async function alterarParceriaComparacaoA() {
 // PARCERIA B
 // ============================================================
 
-async function alterarParceriaComparacaoB() {
+async function alterarParceriaComparacaoB(
+    opcoes = {}
+) {
+
+    const deveSincronizarRestricoes =
+        opcoes?.sincronizarRestricoes !==
+        false;
+
 
     const codigo =
         comparacaoElementos
@@ -1181,7 +1584,17 @@ async function alterarParceriaComparacaoB() {
     ) {
 
         verificarBotaoComparar();
+
         atualizarMapaBaseComparacao();
+
+
+        if (
+            deveSincronizarRestricoes
+        ) {
+
+            await sincronizarRestricoesParceriasComparacao();
+
+        }
 
 
         return;
@@ -1210,8 +1623,10 @@ async function alterarParceriaComparacaoB() {
                 .length
         ) {
 
-            comparacaoElementos.localB.selectedIndex =
-                0;
+            comparacaoElementos
+                .localB
+                .selectedIndex =
+                    0;
 
 
             alterarLocalComparacaoB();
@@ -1230,9 +1645,18 @@ async function alterarParceriaComparacaoB() {
     }
 
 
-    verificarBotaoComparar();
-    atualizarMapaBaseComparacao();
+    if (
+        deveSincronizarRestricoes
+    ) {
 
+        await sincronizarRestricoesParceriasComparacao();
+
+    }
+
+
+    verificarBotaoComparar();
+
+    atualizarMapaBaseComparacao();
 }
 
 
@@ -1269,6 +1693,7 @@ function alterarLocalComparacaoA() {
 
 
     verificarBotaoComparar();
+
     atualizarMapaBaseComparacao();
 
 
@@ -1281,7 +1706,6 @@ function alterarLocalComparacaoA() {
         agendarComparacao();
 
     }
-
 }
 
 
@@ -1318,6 +1742,7 @@ function alterarLocalComparacaoB() {
 
 
     verificarBotaoComparar();
+
     atualizarMapaBaseComparacao();
 
 
@@ -1330,7 +1755,6 @@ function alterarLocalComparacaoB() {
         agendarComparacao();
 
     }
-
 }
 
 
@@ -1358,7 +1782,6 @@ function verificarBotaoComparar() {
             "Pronto para comparar"
             :
             "Aguardando equipamentos";
-
 }
 
 
@@ -1391,7 +1814,6 @@ function atualizarRaioComparacao() {
         agendarComparacao();
 
     }
-
 }
 
 
@@ -1411,7 +1833,6 @@ function agendarComparacao() {
             executarComparacao,
             DEBOUNCE_COMPARACAO
         );
-
 }
 
 
@@ -1447,7 +1868,7 @@ function calcularAreaSelecionada(
 
         const fator =
             criterio ===
-            "proporcional"
+                "proporcional"
                 ?
                 item.fator
                 :
@@ -1463,7 +1884,6 @@ function calcularAreaSelecionada(
 
 
     return area;
-
 }
 
 
@@ -1530,7 +1950,6 @@ function calcularIPVSAlto(
         *
         100
     );
-
 }
 
 
@@ -1631,14 +2050,20 @@ function calcularDerivadosComparacao(
 
 
     return {
-        pretaParda,
-        feminina,
-        coberturaIPVS,
-        ipvsAlto,
-        area,
-        densidade
-    };
 
+        pretaParda,
+
+        feminina,
+
+        coberturaIPVS,
+
+        ipvsAlto,
+
+        area,
+
+        densidade
+
+    };
 }
 
 
@@ -1682,16 +2107,19 @@ function calcularEmpreendimentoComparacao(
 
 
     return {
+
         feature,
+
         buffer,
+
         selecionados,
 
         indicadores:
             resultadoIndicadores,
 
         derivados
-    };
 
+    };
 }
 
 
@@ -1713,7 +2141,6 @@ function diferencaAbsoluta(
             a
         )
     );
-
 }
 
 
@@ -1742,7 +2169,6 @@ function classeDiferenca(
 
 
     return "";
-
 }
 
 
@@ -1780,7 +2206,6 @@ function formatarSinal(
     return formatador(
         0
     );
-
 }
 
 
@@ -1809,6 +2234,7 @@ function linhaComparacao(
             ?
             formatarSinal(
                 diferenca,
+
                 valor =>
                     `${formatarNumero(valor, 1)} p.p.`
             )
@@ -1840,12 +2266,13 @@ function linhaComparacao(
                     ${classeDiferenca(diferenca)}
                 "
             >
+
                 ${textoDiferenca}
+
             </div>
 
         </div>
     `;
-
 }
 
 
@@ -1914,6 +2341,7 @@ function miniComparacao(
 
             </div>
 
+
             <div class="mini-comparacao-linha">
 
                 <div class="mini-comparacao-letra b">
@@ -1940,7 +2368,6 @@ function miniComparacao(
 
         </div>
     `;
-
 }
 
 
@@ -2022,6 +2449,7 @@ function renderizarTabelaComparacao() {
 
             </div>
 
+
             <div
                 class="
                     comparacao-cabecalho-local
@@ -2039,11 +2467,13 @@ function renderizarTabelaComparacao() {
 
             </div>
 
+
             <div class="comparacao-col-diferenca">
                 B − A
             </div>
 
         </div>
+
 
         ${linhaComparacao(
             "Setores censitários",
@@ -2052,6 +2482,7 @@ function renderizarTabelaComparacao() {
             formatarInteiro
         )}
 
+
         ${linhaComparacao(
             "População",
             ia.populacao,
@@ -2059,21 +2490,26 @@ function renderizarTabelaComparacao() {
             formatarInteiro
         )}
 
+
         ${linhaComparacao(
             "Área analisada",
             da.area,
             db.area,
+
             valor =>
                 `${formatarNumero(valor, 2)} km²`
         )}
+
 
         ${linhaComparacao(
             "Densidade",
             da.densidade,
             db.densidade,
+
             valor =>
                 `${formatarInteiro(valor)} hab./km²`
         )}
+
 
         ${linhaComparacao(
             "Renda mediana",
@@ -2081,6 +2517,7 @@ function renderizarTabelaComparacao() {
             ib.rendaMediana,
             formatarMoeda
         )}
+
 
         ${linhaComparacao(
             "Cobertura IPVS",
@@ -2090,11 +2527,13 @@ function renderizarTabelaComparacao() {
             "percentual"
         )}
 
+
         <div class="comparacao-bloco-percentuais">
 
             <h3>
                 Composição territorial
             </h3>
+
 
             ${miniComparacao(
                 "População preta + parda",
@@ -2102,11 +2541,13 @@ function renderizarTabelaComparacao() {
                 db.pretaParda
             )}
 
+
             ${miniComparacao(
                 "População feminina",
                 da.feminina,
                 db.feminina
             )}
+
 
             ${miniComparacao(
                 "Vulnerabilidade alta / muito alta",
@@ -2116,7 +2557,6 @@ function renderizarTabelaComparacao() {
 
         </div>
     `;
-
 }
 
 
@@ -2221,7 +2661,6 @@ function executarComparacao() {
             "Erro ao calcular comparação";
 
     }
-
 }
 
 
@@ -2289,28 +2728,63 @@ async function aplicarGrupoFixoComparacao() {
         );
 
 
-    comparacaoElementos.parceriaA.value =
-        grupo;
+    comparacaoElementos
+        .parceriaA
+        .value =
+            grupo;
 
 
-    comparacaoElementos.parceriaB.value =
-        grupo;
+    comparacaoElementos
+        .parceriaB
+        .value =
+            grupo;
 
+
+    /*
+     * Carrega A e B sem aplicar as restrições durante
+     * o carregamento para evitar corrida entre as duas
+     * funções.
+     */
 
     await Promise.all([
 
-        alterarParceriaComparacaoA(),
+        alterarParceriaComparacaoA(
+            {
 
-        alterarParceriaComparacaoB()
+                sincronizarRestricoes:
+                    false
+
+            }
+        ),
+
+        alterarParceriaComparacaoB(
+            {
+
+                sincronizarRestricoes:
+                    false
+
+            }
+        )
 
     ]);
+
+
+    /*
+     * Agora aplicamos a regra de quantidade.
+     *
+     * Se o grupo fixo tiver somente um equipamento,
+     * A continuará com o grupo e B ficará sem essa
+     * parceria, impedindo comparação do equipamento
+     * com ele mesmo.
+     */
+
+    await sincronizarRestricoesParceriasComparacao();
 
 
     garantirEquipamentosDiferentesComparacao();
 
 
     return true;
-
 }
 
 
@@ -2386,7 +2860,6 @@ function registrarEventosComparacao() {
             "click",
             executarComparacao
         );
-
 }
 
 
@@ -2451,7 +2924,7 @@ function registrarEventosMapaComparacao() {
 
             if (
                 mensagem.type ===
-                "map-ready"
+                    "map-ready"
             ) {
 
                 mapaComparacaoPronto =
@@ -2529,7 +3002,6 @@ function registrarEventosMapaComparacao() {
         },
         500
     );
-
 }
 
 
@@ -2578,13 +3050,41 @@ async function iniciarComparacao() {
         !grupoFixoAplicado
     ) {
 
+        /*
+         * Primeiro carrega os dois lados normalmente.
+         */
+
         await Promise.all([
 
-            alterarParceriaComparacaoA(),
+            alterarParceriaComparacaoA(
+                {
 
-            alterarParceriaComparacaoB()
+                    sincronizarRestricoes:
+                        false
+
+                }
+            ),
+
+            alterarParceriaComparacaoB(
+                {
+
+                    sincronizarRestricoes:
+                        false
+
+                }
+            )
 
         ]);
+
+
+        /*
+         * Depois aplica:
+         *
+         * parceria de 1 equipamento escolhida em A
+         * não aparece em B e vice-versa.
+         */
+
+        await sincronizarRestricoesParceriasComparacao();
 
 
         garantirEquipamentosDiferentesComparacao();
@@ -2601,7 +3101,6 @@ async function iniciarComparacao() {
         agendarComparacao();
 
     }
-
 }
 
 
