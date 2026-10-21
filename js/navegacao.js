@@ -1,75 +1,69 @@
 // ============================================================
-// NAVEGAÇÃO ENTRE ABAS
+// DASHBOARD SPP
+// NAVEGAÇÃO EXCLUSIVAMENTE PELA URL
 // ============================================================
 
-const botoesAbas = document.querySelectorAll(".aba-navegacao");
-const paineisAbas = document.querySelectorAll(".tab-panel");
+(function () {
 
-function abrirAba(nomeAba, atualizarHash = true) {
-    botoesAbas.forEach(botao => {
-        const ativa = botao.dataset.tab === nomeAba;
-        botao.classList.toggle("ativa", ativa);
-        botao.setAttribute("aria-selected", ativa ? "true" : "false");
-    });
+    "use strict";
 
-    paineisAbas.forEach(painel => {
-        const ativa = painel.id === `tab-${nomeAba}`;
-        painel.classList.toggle("ativa", ativa);
-    });
 
-    if (nomeAba === "visao-geral") {
-        setTimeout(() => {
-            try {
-                if (typeof mapa !== "undefined" && mapa) {
-                    mapa.invalidateSize?.({ animate: false });
-                }
+    const configuracao =
+        window.SPPDashboardURL;
+
+
+    const pagina =
+        configuracao?.pagina
+        ||
+        "visao-geral";
+
+
+    function abrirPaginaURL() {
+
+        const paineis =
+            document.querySelectorAll(
+                ".tab-panel"
+            );
+
+
+        paineis.forEach(
+            painel => {
+
+                painel.classList.remove(
+                    "ativa"
+                );
+
             }
-            catch (erro) {
-                console.warn("Não foi possível atualizar o mapa da Visão Geral.", erro);
-            }
-        }, 80);
+        );
+
+
+        const alvo =
+            document.getElementById(
+                `tab-${pagina}`
+            );
+
+
+        if (
+            alvo
+        ) {
+
+            alvo.classList.add(
+                "ativa"
+            );
+
+        }
+
+
+        document.body.dataset.pagina =
+            pagina;
+
     }
 
-    if (nomeAba === "comparacao") {
-        setTimeout(() => {
-            try {
-                mapaComparacao?.invalidateSize({ animate: false });
-            }
-            catch (erro) {
-                console.warn("Não foi possível atualizar o mapa da comparação.", erro);
-            }
-        }, 80);
-    }
 
-    if (atualizarHash) {
-        history.replaceState(null, "", `#${nomeAba}`);
-    }
-}
-
-botoesAbas.forEach(botao => {
-    botao.addEventListener("click", () => {
-        abrirAba(botao.dataset.tab);
-    });
-});
-
-function carregarAbaInicial() {
-    const hash = window.location.hash.replace("#", "").trim();
-
-    const existe = Array.from(botoesAbas).some(
-        botao => botao.dataset.tab === hash
+    document.addEventListener(
+        "DOMContentLoaded",
+        abrirPaginaURL
     );
 
-    abrirAba(existe ? hash : "visao-geral", false);
-}
 
-window.addEventListener("hashchange", () => {
-    const hash = window.location.hash.replace("#", "").trim();
-
-    const existe = Array.from(botoesAbas).some(
-        botao => botao.dataset.tab === hash
-    );
-
-    if (existe) abrirAba(hash, false);
-});
-
-document.addEventListener("DOMContentLoaded", carregarAbaInicial);
+})();
