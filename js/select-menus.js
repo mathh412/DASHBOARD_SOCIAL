@@ -49,7 +49,13 @@
     document.addEventListener('DOMContentLoaded', () => document.body.appendChild(menu));
     document.addEventListener('mousedown', event => {
         if (event.button !== 0 || event.target.tagName !== 'SELECT' || event.target.multiple) return;
-        event.preventDefault(); abrir(event.target);
+        // Bloqueia o menu nativo; a abertura espera o clique completo.
+        event.preventDefault();
+    });
+    document.addEventListener('click', event => {
+        if (event.button !== 0 || event.target.tagName !== 'SELECT' || event.target.multiple) return;
+        event.preventDefault();
+        abrir(event.target);
     });
     document.addEventListener('keydown', event => {
         if (event.target.tagName === 'SELECT' && ['ArrowDown','ArrowUp','Enter',' '].includes(event.key)) {
