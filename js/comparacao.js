@@ -180,7 +180,7 @@ function enviarParaMapaComparacao(
 
             ...dados
         },
-        MAPA_COMPARACAO_ORIGIN
+        "*"
     );
 }
 
@@ -2842,6 +2842,8 @@ function registrarEventosMapaComparacao() {
             if (
                 event.origin !==
                 MAPA_COMPARACAO_ORIGIN
+                &&
+                event.origin !== "null"
             ) {
 
                 return;

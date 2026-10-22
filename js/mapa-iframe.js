@@ -144,7 +144,7 @@
 
                     ...dados
                 },
-                MAPA_ORIGIN
+                "*"
             );
 
     }
@@ -989,6 +989,8 @@
             if (
                 event.origin !==
                 MAPA_ORIGIN
+                &&
+                event.origin !== "null"
             ) {
 
                 return;
