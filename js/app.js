@@ -60,6 +60,127 @@ function carregarElementos() {
     elementos.indicadorDistancia = document.getElementById("filtro-indicador-distancia");
     elementos.passoFaixa = document.getElementById("filtro-passo-faixa");
     elementos.graficoDistancia = document.getElementById("grafico-distancia");
+    criarFiltrosRaca();
+}
+
+const OPCOES_RACA = {
+    branca: "Branca", preta: "Preta", parda: "Parda",
+    amarela: "Amarela", indigena: "Indígena"
+};
+const racasSelecionadas = {
+    mapa: new Set(["preta", "parda"]),
+    distancia: new Set(["preta", "parda"])
+};
+
+function percentualRacas(dados, selecionadas) {
+    const total = Object.keys(OPCOES_RACA).reduce(
+        (soma, chave) => soma + numero(dados?.[chave]), 0
+    );
+    const selecionado = [...selecionadas].reduce(
+        (soma, chave) => soma + numero(dados?.[chave]), 0
+    );
+    return total > 0 ? selecionado / total * 100 : null;
+}
+
+function tituloRacas(contexto) {
+    return "População: " + [...racasSelecionadas[contexto]]
+        .map(chave => OPCOES_RACA[chave]).join(" + ");
+}
+
+function criarFiltrosRaca() {
+    for (const [contexto, seletor] of [
+        ["mapa", elementos.tema],
+        ["distancia", elementos.indicadorDistancia]
+    ]) {
+        if (!seletor) continue;
+        const campo = document.createElement("fieldset");
+        campo.className = "filtro-racas";
+        campo.id = 'opcoes-raca-' + contexto;
+        campo.setAttribute('popover', 'auto');
+        campo.setAttribute('aria-label', 'Raça / Cor');
+        const controle = document.createElement('div');
+        controle.className = 'controle-racas';
+        const rotulo = document.createElement('label');
+        rotulo.textContent = 'Raça / Cor';
+        const botao = document.createElement('button');
+        botao.type = 'button';
+        botao.id = 'botao-raca-' + contexto;
+        rotulo.htmlFor = botao.id;
+        botao.className = 'seletor-racas';
+        botao.setAttribute('popovertarget', campo.id);
+        botao.setAttribute('aria-controls', campo.id);
+        botao.setAttribute('aria-expanded', 'false');
+        controle.append(rotulo, botao);
+        function posicionar() {
+            const rect = botao.getBoundingClientRect();
+            const largura = Math.min(rect.width, window.innerWidth - 16);
+            campo.style.width = largura + 'px';
+            campo.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - largura - 8)) + 'px';
+            const abaixo = window.innerHeight - rect.bottom - 8;
+            const acima = rect.top - 8;
+            const altura = campo.scrollHeight;
+            const abrirAcima = abaixo < altura && acima > abaixo;
+            campo.style.maxHeight = Math.max(0, abrirAcima ? acima : abaixo) + 'px';
+            campo.style.top = (abrirAcima
+                ? Math.max(8, rect.top - Math.min(altura, acima) - 2)
+                : rect.bottom + 2) + 'px';
+        }
+        campo.addEventListener('toggle', () => {
+            const aberto = campo.matches(':popover-open');
+            botao.setAttribute('aria-expanded', String(aberto));
+            if (aberto) posicionar();
+        });
+        window.addEventListener('resize', () => {
+            if (campo.matches(':popover-open')) posicionar();
+        });
+        document.addEventListener('scroll', event => {
+            if (campo.matches(':popover-open') && !campo.contains(event.target)) posicionar();
+        }, true);
+        for (const [chave, nome] of Object.entries(OPCOES_RACA)) {
+            const label = document.createElement("label");
+            const input = document.createElement("input");
+            input.type = "checkbox";
+            input.value = chave;
+            input.checked = racasSelecionadas[contexto].has(chave);
+            input.addEventListener("change", () => {
+                const selecionadas = racasSelecionadas[contexto];
+                if (!input.checked && selecionadas.size === 1) {
+                    input.checked = true;
+                    return;
+                }
+                if (input.checked) selecionadas.add(chave);
+                else selecionadas.delete(chave);
+                atualizar();
+                if (contexto === "mapa") atualizarTemaMapa();
+                else renderizarGraficoDistancia();
+            });
+            label.append(input, document.createTextNode(nome));
+            campo.appendChild(label);
+        }
+        const resumo = document.createElement("small");
+        resumo.className = "resumo-racas";
+        resumo.setAttribute("aria-live", "polite");
+        resumo.className = "resumo-racas sr-only";
+        campo.appendChild(resumo);
+        function atualizar() {
+            controle.hidden = seletor.value !== "raca";
+            if (controle.hidden && campo.matches(":popover-open")) campo.hidePopover();
+            campo.disabled = seletor.disabled;
+            botao.disabled = seletor.disabled;
+            botao.textContent = racasSelecionadas[contexto].size === 5
+                ? 'Todas as opções'
+                : [...racasSelecionadas[contexto]].map(chave => OPCOES_RACA[chave]).join(' + ');
+            botao.title = botao.textContent;
+            resumo.textContent = 'Selecione uma ou mais opções.';
+        }
+        seletor.parentElement.insertAdjacentElement("afterend", controle);
+        document.body.appendChild(campo);
+        seletor.addEventListener("change", atualizar);
+        new MutationObserver(atualizar).observe(seletor, {
+            attributes: true, attributeFilter: ["disabled"]
+        });
+        atualizar();
+    }
 }
 
 // ============================================================
@@ -883,37 +1004,9 @@ function valorTema(
 
     if (
         tema ===
-        "pretaparda"
+        "raca"
     ) {
-        const branca =
-            numero(dados.branca);
-
-        const preta =
-            numero(dados.preta);
-
-        const parda =
-            numero(dados.parda);
-
-        const amarela =
-            numero(dados.amarela);
-
-        const indigena =
-            numero(dados.indigena);
-
-        const total =
-            branca +
-            preta +
-            parda +
-            amarela +
-            indigena;
-
-        return total > 0
-            ? (
-                (preta + parda)
-                /
-                total
-            ) * 100
-            : null;
+        return percentualRacas(dados, racasSelecionadas.mapa);
     }
 
     if (
@@ -1187,7 +1280,7 @@ function formatarValorTema(
 
     if (
         tema ===
-        "pretaparda"
+        "raca"
         ||
         tema ===
         "feminina"
@@ -1321,8 +1414,8 @@ function atualizarLegendaMapa() {
         densidade:
             "Densidade populacional",
 
-        pretaparda:
-            "População preta + parda",
+        raca:
+            tituloRacas("mapa"),
 
         feminina:
             "População feminina"
@@ -2242,25 +2335,6 @@ function calcularFaixasDistancia() {
                     }
                 }
 
-                const totalRaca =
-                    branca +
-                    preta +
-                    parda +
-                    amarela +
-                    indigena;
-
-                const percentualPretaParda =
-                    totalRaca > 0
-                        ? (
-                            preta +
-                            parda
-                        )
-                        /
-                        totalRaca
-                        *
-                        100
-                        : 0;
-
                 const percentualIPVSAlto =
                     ipvsValidos > 0
                         ? ipvsAlto
@@ -2297,8 +2371,7 @@ function calcularFaixasDistancia() {
                             rendas
                         ),
 
-                    pretaparda:
-                        percentualPretaParda,
+                    racas: { branca, preta, parda, amarela, indigena },
 
                     ipvsalto:
                         percentualIPVSAlto,
@@ -2331,9 +2404,9 @@ function valorIndicadorDistancia(
 
     if (
         indicador ===
-        "pretaparda"
+        "raca"
     ) {
-        return faixa.pretaparda;
+        return percentualRacas(faixa.racas, racasSelecionadas.distancia);
     }
 
     if (
@@ -2385,7 +2458,7 @@ function formatarIndicadorDistancia(
 
     if (
         indicador ===
-        "pretaparda"
+        "raca"
         ||
         indicador ===
         "ipvsalto"
@@ -2806,9 +2879,9 @@ async function iniciar() {
     inicializarMapa();
     registrarEventos();
 
-    await carregarDados();
-
     limparGraficoDistancia();
+
+    await carregarDados();
 }
 
 document.addEventListener(

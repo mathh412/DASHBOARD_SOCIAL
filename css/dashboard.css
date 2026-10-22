@@ -847,3 +847,44 @@ input {
         width: 100%;
     }
 }
+
+/* Seleção múltipla compacta, com opções acima do mapa. */
+.controle-racas { display: flex; flex-direction: column; gap: 3px; min-width: 195px; max-width: 240px; }
+.controle-racas[hidden] { display: none; }
+.controle-racas > label { color: #718087; font-size: 9px; }
+.seletor-racas {
+    height: 30px; padding: 0 28px 0 10px; width: 100%;
+    border: 1px solid #ccd7db; border-radius: 5px;
+    background: #fff; color: #40545d; font: inherit; font-size: 10px;
+    text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m3 4 3 3 3-3' fill='none' stroke='%23526775' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 9px center;
+}
+.seletor-racas:hover { border-color: #3b7d95; background-color: #f5fafb; }
+.seletor-racas:focus-visible { outline: 2px solid #3b7d95; outline-offset: 2px; }
+.seletor-racas:disabled { opacity: .55; cursor: default; }
+.filtro-racas {
+    position: fixed; inset: auto; margin: 0; box-sizing: border-box;
+    min-inline-size: 0; max-width: calc(100vw - 16px); padding: 3px; overflow-y: auto;
+    border: 1px solid #ccd7db; border-radius: 5px;
+    background: #fff; color: #40545d;
+    box-shadow: 0 3px 8px #1537471a;
+    font-family: inherit;
+}
+.filtro-racas legend { font-size: 11px; font-weight: 600; padding: 0 4px; }
+.filtro-racas label {
+    display: flex; align-items: center; gap: 7px; padding: 6px 7px; margin: 0; min-height: 27px; box-sizing: border-box;
+    border-radius: 2px; cursor: pointer; font-size: 10px;
+}
+.filtro-racas label:hover { background: #f0f6f8; }
+.filtro-racas label:has(input:checked) { background: #eaf4f7; color: #00506e; }
+.filtro-racas input { margin: 0; accent-color: #00506e; }
+.resumo-racas { display: block; margin: 10px 8px 2px; font-size: 10px; color: #718087; }
+.controles-distancia, .controles-mapa { align-items: flex-end; flex-wrap: wrap; }
+.titulo-mapa { height: auto; min-height: 58px; }
+@media (max-width: 900px) {
+    .controle-racas { max-width: none; width: 100%; }
+}
+
+.filtro-racas .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
