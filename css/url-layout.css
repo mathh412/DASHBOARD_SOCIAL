@@ -499,7 +499,7 @@ body,
 ============================================================ */
 
 @media (
-    max-width: 1150px
+    max-width: 1000px
 ) {
 
     body[data-pagina="comparacao"]

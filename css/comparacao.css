@@ -382,7 +382,7 @@
     font-weight: 650;
 }
 
-@media (max-width: 1150px) {
+@media (max-width: 1000px) {
     #tab-comparacao { overflow-y: auto; }
 
     .comparacao-filtros {
