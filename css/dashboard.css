@@ -888,3 +888,18 @@ input {
 }
 
 .filtro-racas .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Listas alinhadas aos selects, inclusive dentro do Power BI. */
+.menu-select-dashboard {
+    position: fixed; inset: auto; margin: 0; padding: 3px; box-sizing: border-box;
+    border: 1px solid #ccd7db; border-radius: 5px; background: white;
+    box-shadow: 0 3px 8px #1537471a; overflow-y: auto; max-height: 280px;
+}
+.menu-select-dashboard button {
+    display: block; width: 100%; border: 0; border-radius: 2px;
+    padding: 7px 10px; text-align: left; background: white;
+    color: #40545d; font: inherit; font-size: 10px; cursor: pointer;
+}
+.menu-select-dashboard button[aria-selected="true"] { background: #eaf4f7; color: #00506e; }
+.menu-select-dashboard button:hover, .menu-select-dashboard button:focus-visible { background: #dceef4; outline: none; }
+.menu-select-dashboard button:disabled { opacity: .5; cursor: default; }
