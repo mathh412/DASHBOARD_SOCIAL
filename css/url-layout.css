@@ -904,7 +904,69 @@ body[data-pagina="comparacao"] .campo-comparacao select {
 .genero-percentual { font-size: 14px; line-height: 1.4; }
 .genero-label { font-weight: 600; }
 .genero-valor { font-size: 30px; }
-.linha-barra { grid-template-columns: minmax(75px, 100px) minmax(0, 1fr) 65px; }
+.painel-analitico:has(.total-genero-resumo) {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+.painel-analitico:has(.total-genero-resumo) .genero-container {
+    flex: 1 0 180px;
+    height: auto;
+}
+.total-genero-resumo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    flex-shrink: 0;
+    margin: 0 20px 20px;
+    padding: 16px 20px;
+    background: #fff7ed;
+    border-left: 3px solid var(--laranja-spp);
+    border-radius: 8px;
+}
+.total-genero-texto,
+.total-genero-numero { display: flex; flex-direction: column; gap: 4px; }
+.total-genero-titulo { color: var(--azul); font-size: 15px; font-weight: 600; }
+.total-genero-descricao,
+.total-genero-numero > span { color: #66757f; font-size: 12px; }
+.total-genero-numero { margin-left: auto; text-align: right; }
+#total-genero { color: var(--azul); font-size: 28px; font-weight: 700; line-height: 1.2; }
+
+.comparacao-col-diferenca {
+    font-size: 16px;
+    font-weight: 700;
+}
+.comparacao-diferenca {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.genero-comparacao { margin: 18px 0 22px; }
+.contexto-analise { grid-column: 1 / -1; color: #526269; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+.tabela-comparacao > .contexto-analise { padding: 0 0 12px; }
+.comparacao-col-diferenca[title] { cursor: help; }
+.genero-comparacao-legenda { display: flex; gap: 18px; flex-wrap: wrap; margin: 0 0 12px 29px; font-size: 12px; color: #526269; }
+.genero-comparacao-legenda > span { display: inline-flex; align-items: center; gap: 6px; }
+.genero-comparacao-legenda i { width: 10px; height: 10px; border-radius: 3px; }
+.genero-comparacao .feminino { background: #00506E; }
+.genero-comparacao .masculino { background: #F08200; }
+.genero-comparacao-linha { display: grid; grid-template-columns: 22px minmax(0, 1fr); align-items: start; gap: 7px; margin-top: 14px; }
+.genero-comparacao-barra { display: flex; height: 22px; border-radius: 6px; overflow: hidden; background: #e9eef0; }
+.genero-segmento { display: block; height: 100%; }
+.genero-comparacao-valores { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 7px; font-size: 13px; color: #40545d; line-height: 1.5; }
+.genero-comparacao-valores > span:last-child { text-align: right; }
+.genero-nome { display: block; font-size: 11px; color: #66757f; }
+@media (max-width: 480px) {
+    .genero-comparacao-valores { grid-template-columns: 1fr; }
+    .genero-comparacao-valores > span:last-child { text-align: left; }
+}
+.mini-comparacao-linha { grid-template-columns: 22px minmax(0, 1fr) minmax(130px, 190px); }
+.linha-distancia { grid-template-columns: minmax(90px, 140px) minmax(0, 1fr) minmax(130px, 210px); }
+.linha-barra { grid-template-columns: 100px minmax(0, 1fr) minmax(130px, 210px); }
+.ipvs-valor { text-align: right; }
+.valor-barra, .mini-comparacao-valor, .valor-distancia { overflow-wrap: anywhere; }
 .legenda-item,
 .aba-navegacao,
 #status-carregamento { font-size: 12px; }
@@ -913,4 +975,10 @@ body[data-pagina="comparacao"] .campo-comparacao select {
     #grafico-raca { padding: 16px; overflow-y: auto; }
     .linha-barra { gap: 8px; grid-template-columns: 85px minmax(0, 1fr) 60px; }
     .genero-container { padding: 12px; }
+    .linha-barra { grid-template-columns: 85px minmax(0, 1fr); }
+    .valor-barra { grid-column: 1 / -1; }
+    .mini-comparacao-linha { grid-template-columns: 22px minmax(0, 1fr); }
+    .mini-comparacao-valor { grid-column: 2; }
+    .linha-distancia { grid-template-columns: 90px minmax(0, 1fr); }
+    .valor-distancia { grid-column: 1 / -1; }
 }

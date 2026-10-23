@@ -73,8 +73,19 @@ const racasSelecionadas = {
     comparacao: new Set()
 };
 
+function quantidadeRacas(dados, selecionadas) {
+    if ([...selecionadas].some(chave => !temDado(dados?.[chave]))) return null;
+    return [...selecionadas].reduce((soma, chave) => soma + numero(dados?.[chave]), 0);
+}
+
+function quantidadePercentual(quantidade, percentual, unidade = "pessoas") {
+    if (!temDado(quantidade)) return "Sem dados";
+    return `${formatarInteiro(quantidade)} ${unidade} (${percentual == null ? "Sem dados" : formatarPercentual(percentual)})`;
+}
+
 function percentualRacas(dados, selecionadas) {
-    if (!selecionadas.size) return null;
+    if (!selecionadas.size) return 0;
+    if (Object.keys(OPCOES_RACA).some(chave => !temDado(dados?.[chave]))) return null;
     const total = Object.keys(OPCOES_RACA).reduce(
         (soma, chave) => soma + numero(dados?.[chave]), 0
     );
@@ -210,16 +221,51 @@ function inicializarMapa() {
 // UTILIDADES
 // ============================================================
 
+function temDado(valor) {
+    return valor !== null && valor !== undefined && valor !== "" && Number.isFinite(Number(valor));
+}
+
+function totalGenero(dados) {
+    return temDado(dados.feminina) && temDado(dados.masculina)
+        ? dados.feminina + dados.masculina : null;
+}
+
+function textoCriterio(criterio) {
+    return {centroide: "Centroide", intersecao: "Interseção", proporcional: "Área proporcional (estimativa)"}[criterio] || criterio;
+}
+
+function atualizarContextoAnalise() {
+    const destino = document.getElementById("contexto-analise");
+    if (!destino) return;
+    destino.textContent = empreendimentoSelecionado
+        ? `${nomeDoLocal(empreendimentoSelecionado)} · Raio: ${formatarRaio(elementos.raio.value)} · ${textoCriterio(elementos.criterio.value)}`
+        : "Selecione um equipamento para iniciar a análise.";
+}
+
+function ordemIPVS(nome) {
+    const n = nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (n.includes("nao classificado")) return 7;
+    if (n.includes("baixissima")) return 5;
+    if (n.includes("muito baixa")) return 4;
+    if (n.includes("baixa")) return 3;
+    if (n.includes("media")) return 2;
+    if (n.includes("muito alta")) return 0;
+    if (n.includes("alta")) return 1;
+    return 6;
+}
+
 function numero(valor) {
     const n = Number(valor);
     return Number.isFinite(n) ? n : 0;
 }
 
 function formatarInteiro(valor) {
+    if (!temDado(valor)) return "Sem dados";
     return Math.round(numero(valor)).toLocaleString("pt-BR");
 }
 
 function formatarMoeda(valor) {
+    if (!temDado(valor)) return "Sem dados";
     const n = Number(valor);
 
     if (!Number.isFinite(n)) return "-";
@@ -232,6 +278,7 @@ function formatarMoeda(valor) {
 }
 
 function formatarNumero(valor, casas = 1) {
+    if (!temDado(valor)) return "Sem dados";
     return numero(valor).toLocaleString("pt-BR", {
         minimumFractionDigits: casas,
         maximumFractionDigits: casas
@@ -239,6 +286,7 @@ function formatarNumero(valor, casas = 1) {
 }
 
 function formatarPercentual(valor) {
+    if (!temDado(valor)) return "Sem dados";
     return `${formatarNumero(valor, 1)}%`;
 }
 
@@ -979,6 +1027,7 @@ function valorTema(
         dadosDaFeature(feature);
 
     if (tema === "renda") {
+        if (!temDado(dados.renda)) return null;
         const valor =
             Number(dados.renda);
 
@@ -1001,7 +1050,7 @@ function valorTema(
                 dados.area_km2
             );
 
-        return area > 0
+        return temDado(dados.populacao) && area > 0
             ? pop / area
             : null;
     }
@@ -1017,6 +1066,7 @@ function valorTema(
         tema ===
         "feminina"
     ) {
+        if (!temDado(dados.feminina) || !temDado(dados.masculina)) return null;
         const feminina =
             numero(
                 dados.feminina
@@ -1365,7 +1415,7 @@ function atualizarLegendaMapa() {
                 "Sem informação",
                 COR_SEM_DADO
             ]
-        ];
+        ].sort((a, b) => ordemIPVS(a[0]) - ordemIPVS(b[0]));
 
         elementos.legenda.innerHTML = `
             <div class="legenda-titulo">
@@ -1698,6 +1748,8 @@ function calcularIndicadoresSelecionados(
     let masculina = 0;
     let feminina = 0;
 
+    const campos = ["populacao", "branca", "preta", "parda", "amarela", "indigena", "masculina", "feminina"];
+    const presentes = Object.fromEntries(campos.map(c => [c, 0]));
     const rendas = [];
     const ipvsContagem = {};
 
@@ -1711,6 +1763,8 @@ function calcularIndicadoresSelecionados(
             dadosDaFeature(
                 item.feature
             );
+
+        for (const campo of campos) if (temDado(dados[campo])) presentes[campo]++;
 
         const fator =
             criterio ===
@@ -1817,20 +1871,20 @@ function calcularIndicadoresSelecionados(
         setores:
             selecionados.length,
 
-        populacao,
+        populacao: presentes.populacao ? populacao : null,
 
         rendaMediana:
             calcularMediana(
                 rendas
             ),
 
-        branca,
-        preta,
-        parda,
-        amarela,
-        indigena,
-        masculina,
-        feminina,
+        branca: presentes.branca ? branca : null,
+        preta: presentes.preta ? preta : null,
+        parda: presentes.parda ? parda : null,
+        amarela: presentes.amarela ? amarela : null,
+        indigena: presentes.indigena ? indigena : null,
+        masculina: presentes.masculina ? masculina : null,
+        feminina: presentes.feminina ? feminina : null,
         ipvsContagem,
         setoresComIPVS
     };
@@ -1867,7 +1921,7 @@ function atualizarDashboard(
                 ? formatarMoeda(
                     resultado.rendaMediana
                 )
-                : "-";
+                : "Sem dados";
 
     document
         .getElementById(
@@ -1894,12 +1948,7 @@ function atualizarDashboard(
 }
 
 function atualizarRaca(valores) {
-    const total =
-        valores.branca +
-        valores.preta +
-        valores.parda +
-        valores.amarela +
-        valores.indigena;
+    const total = quantidadeRacas(valores, new Set(Object.keys(OPCOES_RACA)));
 
     const atualizar =
         (
@@ -1907,13 +1956,13 @@ function atualizarRaca(valores) {
             valor
         ) => {
             const percentual =
-                total > 0
+                temDado(valor) && total > 0
                     ? valor
                         /
                         total
                         *
                         100
-                    : 0;
+                    : null;
 
             const barra =
                 document.getElementById(
@@ -1927,14 +1976,13 @@ function atualizarRaca(valores) {
 
             if (barra) {
                 barra.style.width =
-                    `${percentual}%`;
+                    `${percentual ?? 0}%`;
             }
 
             if (texto) {
-                texto.textContent =
-                    formatarPercentual(
-                        percentual
-                    );
+                texto.textContent = quantidadePercentual(valor, percentual);
+                texto.title = `${texto.textContent}. Total da população por raça/cor: ${formatarInteiro(total)} pessoas.`;
+                if (barra) barra.parentElement.title = texto.title;
             }
         };
 
@@ -1965,9 +2013,10 @@ function atualizarRaca(valores) {
 }
 
 function atualizarGenero(valores) {
-    const total =
-        valores.feminina +
-        valores.masculina;
+    const total = totalGenero(valores);
+
+    document.getElementById("total-genero").textContent =
+        formatarInteiro(total);
 
     const pf =
         total > 0
@@ -1976,7 +2025,7 @@ function atualizarGenero(valores) {
                 total
                 *
                 100
-            : 0;
+            : null;
 
     const pm =
         total > 0
@@ -1985,7 +2034,7 @@ function atualizarGenero(valores) {
                 total
                 *
                 100
-            : 0;
+            : null;
 
     document
         .getElementById(
@@ -2040,8 +2089,7 @@ function atualizarIPVS(
             contagem
         )
         .sort(
-            (a, b) =>
-                b[1] - a[1]
+            (a, b) => ordemIPVS(a[0]) - ordemIPVS(b[0]) || a[0].localeCompare(b[0], "pt-BR")
         );
 
     if (!itens.length) {
@@ -2074,6 +2122,7 @@ function atualizarIPVS(
 
         elemento.className =
             "ipvs-item";
+        elemento.title = `${nome}: ${quantidadePercentual(quantidade, percentual, "setores")}. Total: ${formatarInteiro(total)} setores.`;
 
         elemento.innerHTML = `
             <span class="ipvs-nome">
@@ -2081,7 +2130,7 @@ function atualizarIPVS(
             </span>
 
             <span class="ipvs-valor">
-                ${formatarPercentual(percentual)}
+                ${quantidadePercentual(quantidade, percentual, "setores")}
             </span>
         `;
 
@@ -2230,6 +2279,8 @@ function calcularFaixasDistancia() {
                 let ipvsValidos = 0;
                 let ipvsAlto = 0;
 
+                const campos = ["populacao", "branca", "preta", "parda", "amarela", "indigena"];
+                const presentes = Object.fromEntries(campos.map(c => [c, 0]));
                 const rendas = [];
 
                 for (
@@ -2240,6 +2291,8 @@ function calcularFaixasDistancia() {
                         dadosDaFeature(
                             feature
                         );
+
+                    for (const campo of campos) if (temDado(dados[campo])) presentes[campo]++;
 
                     populacao +=
                         numero(
@@ -2331,11 +2384,11 @@ function calcularFaixasDistancia() {
                         : 0;
 
                 const densidade =
-                    areaTotal > 0
+                    presentes.populacao && areaTotal > 0
                         ? populacao
                             /
                             areaTotal
-                        : 0;
+                        : null;
 
                 return {
                     inicio:
@@ -2350,17 +2403,19 @@ function calcularFaixasDistancia() {
                     quantidadeSetores:
                         faixa.setores.length,
 
-                    populacao,
+                    populacao: presentes.populacao ? populacao : null,
 
                     renda:
                         calcularMediana(
                             rendas
                         ),
 
-                    racas: { branca, preta, parda, amarela, indigena },
+                    racas: Object.fromEntries(Object.entries({branca, preta, parda, amarela, indigena}).map(([k,v]) => [k, presentes[k] ? v : null])),
+                    totalIPVS: ipvsValidos,
+                    quantidadeIPVSAlto: ipvsValidos ? ipvsAlto : null,
 
                     ipvsalto:
-                        percentualIPVSAlto,
+                        ipvsValidos ? percentualIPVSAlto : null,
 
                     densidade
                 };
@@ -2423,7 +2478,7 @@ function formatarIndicadorDistancia(
         ||
         valor === undefined
     ) {
-        return "-";
+        return "Sem dados";
     }
 
     if (
@@ -2528,6 +2583,12 @@ function renderizarGraficoDistancia() {
 
         linha.className =
             "linha-distancia";
+        const base = indicador === "raca"
+            ? quantidadeRacas(faixa.racas, new Set(Object.keys(OPCOES_RACA)))
+            : indicador === "ipvsalto" ? faixa.totalIPVS : null;
+        linha.title = `${faixa.label}: ${formatarIndicadorDistancia(valor, indicador)}${base == null ? "" : `. Total usado no cálculo: ${formatarInteiro(base)} ${indicador === "raca" ? "pessoas" : "setores"}`}. ${formatarInteiro(faixa.quantidadeSetores)} setores na faixa.`;
+        if (indicador === "raca") linha.title += ` Quantidade selecionada: ${formatarInteiro(quantidadeRacas(faixa.racas, racasSelecionadas.distancia))} pessoas.`;
+        if (indicador === "ipvsalto") linha.title += ` Quantidade: ${formatarInteiro(faixa.quantidadeIPVSAlto)} setores.`;
 
         linha.innerHTML = `
             <div class="faixa-distancia">
@@ -2551,7 +2612,11 @@ function renderizarGraficoDistancia() {
             </div>
 
             <div class="valor-distancia">
-                ${formatarIndicadorDistancia(valor, indicador)}
+                ${indicador === "raca"
+                    ? quantidadePercentual(quantidadeRacas(faixa.racas, racasSelecionadas.distancia), valor)
+                    : indicador === "ipvsalto"
+                        ? quantidadePercentual(faixa.quantidadeIPVSAlto, valor, "setores")
+                        : formatarIndicadorDistancia(valor, indicador)}
             </div>
         `;
 

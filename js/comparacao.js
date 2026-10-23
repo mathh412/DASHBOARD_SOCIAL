@@ -1830,18 +1830,19 @@ function calcularAreaSelecionada(
 // IPVS ALTO
 // ============================================================
 
+function quantidadeIPVSAltoComparacao(contagem) {
+    return Object.entries(contagem).reduce((soma, [nome, quantidade]) => {
+        const chave = nome.trim().toLowerCase();
+        return soma + (chave.includes("vulnerabilidade alta") || chave.includes("vulnerabilidade muito alta") ? quantidade : 0);
+    }, 0);
+}
+
 function calcularIPVSAlto(
     contagem,
     total
 ) {
 
-    if (
-        !total
-    ) {
-
-        return 0;
-
-    }
+    if (!total) return null;
 
 
     let alto =
@@ -1949,14 +1950,14 @@ function calcularDerivadosComparacao(
 
 
     const densidade =
-        area >
+        temDado(resultado.populacao) && area >
             0
             ?
             resultado.populacao
             /
             area
             :
-            0;
+            null;
 
 
     return {
@@ -2019,7 +2020,8 @@ function calcularEmpreendimentoComparacao(
         feature,
 
         buffer,
-
+        raio,
+        criterio,
         selecionados,
 
         indicadores:
@@ -2039,6 +2041,7 @@ function diferencaAbsoluta(
     a,
     b
 ) {
+    if (!temDado(a) || !temDado(b)) return null;
 
     return (
         numero(
@@ -2084,6 +2087,7 @@ function formatarSinal(
     valor,
     formatador
 ) {
+    if (!temDado(valor)) return "Sem dados";
 
     const n =
         numero(
@@ -2191,7 +2195,12 @@ function linhaComparacao(
 function miniComparacao(
     titulo,
     valorA,
-    valorB
+    valorB,
+    quantidadeA = null,
+    quantidadeB = null,
+    unidade = "pessoas",
+    baseA = null,
+    baseB = null
 ) {
 
     const maximo =
@@ -2225,7 +2234,7 @@ function miniComparacao(
                 ${titulo}
             </div>
 
-            <div class="mini-comparacao-linha">
+            <div class="mini-comparacao-linha" title="A: ${quantidadePercentual(quantidadeA, valorA, unidade)}. Total usado no cálculo: ${formatarInteiro(baseA)} ${unidade}. B − A: ${formatarSinal(diferencaAbsoluta(valorA, valorB), v => formatarNumero(v, 1) + ' p.p.')}">
 
                 <div class="mini-comparacao-letra a">
                     A
@@ -2244,13 +2253,13 @@ function miniComparacao(
                 </div>
 
                 <div class="mini-comparacao-valor">
-                    ${valorA == null ? "—" : formatarPercentual(valorA)}
+                    ${quantidadeA == null ? (valorA == null ? "Sem dados" : formatarPercentual(valorA)) : quantidadePercentual(quantidadeA, valorA, unidade)}
                 </div>
 
             </div>
 
 
-            <div class="mini-comparacao-linha">
+            <div class="mini-comparacao-linha" title="B: ${quantidadePercentual(quantidadeB, valorB, unidade)}. Total usado no cálculo: ${formatarInteiro(baseB)} ${unidade}. B − A: ${formatarSinal(diferencaAbsoluta(valorA, valorB), v => formatarNumero(v, 1) + ' p.p.')}">
 
                 <div class="mini-comparacao-letra b">
                     B
@@ -2269,7 +2278,7 @@ function miniComparacao(
                 </div>
 
                 <div class="mini-comparacao-valor">
-                    ${valorB == null ? "—" : formatarPercentual(valorB)}
+                    ${quantidadeB == null ? (valorB == null ? "Sem dados" : formatarPercentual(valorB)) : quantidadePercentual(quantidadeB, valorB, unidade)}
                 </div>
 
             </div>
@@ -2282,6 +2291,40 @@ function miniComparacao(
 // ============================================================
 // TABELA
 // ============================================================
+
+function composicaoGeneroComparacao(indicadoresA, indicadoresB) {
+    const linha = (lado, dados) => {
+        const feminina = dados.feminina;
+        const masculina = dados.masculina;
+        const total = totalGenero(dados);
+        const pf = total > 0 ? feminina / total * 100 : null;
+        const pm = total > 0 ? masculina / total * 100 : null;
+        const descricao = `${lado}: Feminino ${quantidadePercentual(feminina, pf)}; Masculino ${quantidadePercentual(masculina, pm)}`;
+        return `
+            <div class="genero-comparacao-linha">
+                <span class="mini-comparacao-letra ${lado.toLowerCase()}">${lado}</span>
+                <div class="genero-comparacao-dados">
+                    <div class="genero-comparacao-barra" role="img" aria-label="${descricao}">
+                        <span class="genero-segmento feminino" style="width:${pf ?? 0}%" title="Feminino: ${quantidadePercentual(feminina, pf)}. Total: ${formatarInteiro(total)} pessoas."></span>
+                        <span class="genero-segmento masculino" style="width:${pm ?? 0}%" title="Masculino: ${quantidadePercentual(masculina, pm)}. Total: ${formatarInteiro(total)} pessoas."></span>
+                    </div>
+                    <div class="genero-comparacao-valores">
+                        <span aria-label="Feminino: ${quantidadePercentual(feminina, pf)}">${quantidadePercentual(feminina, pf)}</span>
+                        <span aria-label="Masculino: ${quantidadePercentual(masculina, pm)}">${quantidadePercentual(masculina, pm)}</span>
+                    </div>
+                </div>
+            </div>`;
+    };
+    return `<section class="genero-comparacao">
+        <div class="mini-comparacao-titulo">Composição por gênero</div>
+        <div class="genero-comparacao-legenda">
+            <span><i class="feminino"></i>Feminino</span>
+            <span><i class="masculino"></i>Masculino</span>
+        </div>
+        ${linha("A", indicadoresA)}
+        ${linha("B", indicadoresB)}
+    </section>`;
+}
 
 function renderizarTabelaComparacao() {
 
@@ -2380,7 +2423,7 @@ function renderizarTabelaComparacao() {
             </div>
 
 
-            <div class="comparacao-col-diferenca">
+            <div class="comparacao-col-diferenca" tabindex="0" title="Valor de B menos o valor de A. Positivo: B é maior. Negativo: A é maior. Diferenças de percentuais são expressas em pontos percentuais (p.p.).">
                 B − A
             </div>
 
@@ -2447,23 +2490,29 @@ function renderizarTabelaComparacao() {
                 ? miniComparacao(
                     tituloRacas("comparacao"),
                     percentualRacas(ia, racasSelecionadas.comparacao),
-                    percentualRacas(ib, racasSelecionadas.comparacao)
+                    percentualRacas(ib, racasSelecionadas.comparacao),
+                    quantidadeRacas(ia, racasSelecionadas.comparacao),
+                    quantidadeRacas(ib, racasSelecionadas.comparacao),
+                    "pessoas",
+                    quantidadeRacas(ia, new Set(Object.keys(OPCOES_RACA))),
+                    quantidadeRacas(ib, new Set(Object.keys(OPCOES_RACA)))
                 )
-                : miniComparacao("População", 0, 0)}
+                : miniComparacao("População", 0, 0, 0, 0, "pessoas", quantidadeRacas(ia, new Set(Object.keys(OPCOES_RACA))), quantidadeRacas(ib, new Set(Object.keys(OPCOES_RACA))))}
             </div>
 
 
-            ${miniComparacao(
-                "População feminina",
-                da.feminina,
-                db.feminina
-            )}
+            ${composicaoGeneroComparacao(ia, ib)}
 
 
             ${miniComparacao(
                 "Vulnerabilidade alta / muito alta",
                 da.ipvsAlto,
-                db.ipvsAlto
+                db.ipvsAlto,
+                quantidadeIPVSAltoComparacao(ia.ipvsContagem),
+                quantidadeIPVSAltoComparacao(ib.ipvsContagem),
+                "setores",
+                ia.setoresComIPVS,
+                ib.setoresComIPVS
             )}
 
         </div>
