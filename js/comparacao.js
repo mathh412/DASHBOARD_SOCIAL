@@ -2340,6 +2340,10 @@ function renderizarTabelaComparacao() {
         b.derivados;
 
 
+    const controleRaca = document.getElementById("filtro-raca-comparacao");
+    const focoRaca = controleRaca?.contains(document.activeElement)
+        ? document.activeElement : null;
+
     comparacaoElementos.tabela.innerHTML = `
         <div class="comparacao-tabela-cabecalho">
 
@@ -2434,13 +2438,19 @@ function renderizarTabelaComparacao() {
             </h3>
 
 
+            <div class="comparacao-raca-cabecalho">
+                <span>População:</span>
+                <div id="posicao-raca-comparacao"></div>
+            </div>
+            <div class="comparacao-raca-resultado">
             ${racasSelecionadas.comparacao.size
                 ? miniComparacao(
                     tituloRacas("comparacao"),
                     percentualRacas(ia, racasSelecionadas.comparacao),
                     percentualRacas(ib, racasSelecionadas.comparacao)
                 )
-                : '<p class="comparacao-raca-vazia">Selecione uma ou mais opções de raça / cor para comparar os territórios.</p>'}
+                : miniComparacao("População", 0, 0)}
+            </div>
 
 
             ${miniComparacao(
@@ -2458,6 +2468,11 @@ function renderizarTabelaComparacao() {
 
         </div>
     `;
+
+    if (controleRaca) {
+        document.getElementById("posicao-raca-comparacao").replaceWith(controleRaca);
+        focoRaca?.focus({ preventScroll: true });
+    }
 }
 
 

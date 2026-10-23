@@ -168,7 +168,7 @@ function criarFiltrosRaca() {
             if (controle.hidden && campo.matches(":popover-open")) campo.hidePopover();
             campo.disabled = Boolean(seletor?.disabled);
             botao.disabled = Boolean(seletor?.disabled);
-            botao.textContent = racasSelecionadas[contexto].size === 5
+            botao.textContent = contexto !== "comparacao" && racasSelecionadas[contexto].size === 5
                 ? 'Todas as opções'
                 : ([...racasSelecionadas[contexto]].map(chave => OPCOES_RACA[chave]).join(' + ') || 'Selecione raça / cor');
             botao.title = botao.textContent;

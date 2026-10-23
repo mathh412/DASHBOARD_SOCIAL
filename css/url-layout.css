@@ -717,3 +717,63 @@ body[data-pagina="comparacao"] .comparacao-configuracao {
 .comparacao-controle-raca { padding: 12px 13px; border-bottom: 1px solid #edf1f2; flex: 0 0 auto; }
 .comparacao-controle-raca .controle-racas { width: 100%; max-width: none; min-width: 0; }
 .comparacao-raca-vazia { margin: 0 0 14px; color: #66757f; font-size: 11px; line-height: 1.5; }
+
+.tabela-comparacao > .comparacao-controle-raca {
+    margin-top: 14px;
+    padding: 12px 0;
+    border-top: 1px solid #edf1f2;
+    border-bottom: 0;
+}
+
+.comparacao-raca-cabecalho {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0 0 5px;
+    padding: 0;
+    border: 0;
+    color: #65757c;
+    font-size: 8px;
+    font-weight: 600;
+}
+
+.comparacao-raca-cabecalho .comparacao-controle-raca {
+    padding: 0;
+    border: 0;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.comparacao-raca-cabecalho .controle-racas > label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+
+.comparacao-raca-cabecalho .seletor-racas {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    min-height: 16px;
+    padding: 0 16px 0 2px;
+    border-color: transparent;
+    border-radius: 3px;
+    background-position: right 2px center;
+    background-size: 10px;
+    color: #65757c;
+    font-size: 8px;
+    font-weight: 600;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 16px;
+    overflow: visible;
+}
+
+.comparacao-raca-resultado .mini-comparacao-titulo {
+    display: none;
+}
