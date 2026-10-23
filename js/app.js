@@ -117,7 +117,7 @@ function criarFiltrosRaca() {
         controle.append(rotulo, botao);
         function posicionar() {
             const rect = botao.getBoundingClientRect();
-            const largura = Math.min(rect.width, window.innerWidth - 16);
+            const largura = Math.min(Math.max(rect.width, 195), window.innerWidth - 16);
             campo.style.width = largura + 'px';
             campo.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - largura - 8)) + 'px';
             const abaixo = window.innerHeight - rect.bottom - 8;
@@ -2392,7 +2392,9 @@ function valorIndicadorDistancia(
         indicador ===
         "raca"
     ) {
-        return percentualRacas(faixa.racas, racasSelecionadas.distancia);
+        return racasSelecionadas.distancia.size
+            ? percentualRacas(faixa.racas, racasSelecionadas.distancia)
+            : 0;
     }
 
     if (
@@ -2480,11 +2482,6 @@ function renderizarGraficoDistancia() {
 
     const indicador =
         elementos.indicadorDistancia.value;
-
-    if (indicador === "raca" && !racasSelecionadas.distancia.size) {
-        container.textContent = "Selecione uma ou mais opções de raça / cor.";
-        return;
-    }
 
     const valores =
         dadosFaixasDistancia.map(
