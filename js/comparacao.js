@@ -2427,15 +2427,6 @@ function renderizarTabelaComparacao() {
         )}
 
 
-        ${linhaComparacao(
-            "Cobertura IPVS",
-            da.coberturaIPVS,
-            db.coberturaIPVS,
-            formatarPercentual,
-            "percentual"
-        )}
-
-
         <div class="comparacao-bloco-percentuais">
 
             <h3>
