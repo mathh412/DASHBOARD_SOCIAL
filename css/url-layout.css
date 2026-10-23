@@ -777,3 +777,140 @@ body[data-pagina="comparacao"] .comparacao-configuracao {
 .comparacao-raca-resultado .mini-comparacao-titulo {
     display: none;
 }
+
+/* Leitura do perfil por distância. */
+.controle-distancia label,
+.controles-distancia .controle-racas > label {
+    font-size: 12px;
+}
+
+.controle-distancia select,
+.controles-distancia .seletor-racas {
+    font-size: 13px;
+    height: 36px;
+}
+
+#opcoes-raca-distancia label {
+    font-size: 13px;
+}
+
+.controles-distancia {
+    flex-wrap: wrap;
+}
+
+.cabecalho-distancia {
+    flex-basis: auto;
+}
+
+.faixa-distancia,
+.valor-distancia {
+    font-size: 14px;
+}
+
+.detalhe-distancia,
+.nota-distancia {
+    font-size: 11px;
+}
+
+.linha-distancia {
+    min-height: 48px;
+    grid-template-columns: minmax(90px, 140px) minmax(0, 1fr) minmax(65px, 110px);
+}
+
+.mensagem-distancia {
+    font-size: 14px;
+}
+
+/* Escala de leitura compartilhada por todas as páginas. */
+.titulo-painel h2 { font-size: 18px; }
+.titulo-painel p,
+.cabecalho-distancia p,
+.card-rodape,
+.nota-distancia { font-size: 12px; line-height: 1.45; }
+
+.campo-filtro label,
+.campo-comparacao label,
+.controle-tema label,
+.controle-distancia label,
+.controle-racas > label,
+.comparacao-raio-topo label { font-size: 13px; font-weight: 600; }
+
+.campo-filtro select,
+.campo-comparacao select,
+.controle-tema select,
+.controle-distancia select,
+.seletor-racas,
+#comparacao-criterio { font-size: 13px; min-height: 36px; }
+
+.filtro-racas label,
+.menu-select-dashboard button { font-size: 13px; }
+
+.card-titulo,
+.mini-comparacao-titulo,
+.comparacao-raca-cabecalho {
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.card-valor { font-size: 28px; }
+.comparacao-metrica,
+.comparacao-cabecalho-local strong,
+.comparacao-diferenca,
+.comparacao-legenda-item,
+.ipvs-nome { font-size: 13px; line-height: 1.4; }
+
+.comparacao-valor-a,
+.comparacao-valor-b,
+.mini-comparacao-valor,
+.ipvs-valor { font-size: 14px; }
+
+.comparacao-cabecalho-local span,
+.comparacao-col-diferenca,
+.mini-comparacao-letra,
+.escala-raio,
+.comparacao-escala { font-size: 11px; }
+
+.mini-comparacao-titulo { margin-bottom: 8px; }
+.mini-comparacao { margin-bottom: 18px; }
+.mini-comparacao-linha { grid-template-columns: 22px minmax(0, 1fr) 65px; min-height: 26px; }
+.mini-comparacao-letra { width: 22px; height: 22px; }
+.comparacao-linha { min-height: 46px; }
+
+.comparacao-raca-cabecalho .seletor-racas {
+    font-size: 14px;
+    line-height: 22px;
+    min-height: 24px;
+}
+
+.controles-mapa,
+.controles-distancia { flex-wrap: wrap; }
+.titulo-painel { flex-basis: auto; }
+
+body[data-pagina="comparacao"] .comparacao-filtros {
+    height: auto;
+    min-height: 150px;
+    flex-shrink: 0;
+}
+
+body[data-pagina="comparacao"] .campo-comparacao select {
+    font-size: 13px;
+    min-height: 36px;
+}
+
+.nome-barra,
+.valor-barra,
+.genero-label,
+.genero-percentual { font-size: 14px; line-height: 1.4; }
+.genero-label { font-weight: 600; }
+.genero-valor { font-size: 30px; }
+.linha-barra { grid-template-columns: minmax(75px, 100px) minmax(0, 1fr) 65px; }
+.legenda-item,
+.aba-navegacao,
+#status-carregamento { font-size: 12px; }
+
+@media (max-width: 720px) {
+    #grafico-raca { padding: 16px; overflow-y: auto; }
+    .linha-barra { gap: 8px; grid-template-columns: 85px minmax(0, 1fr) 60px; }
+    .genero-container { padding: 12px; }
+}
