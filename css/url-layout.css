@@ -609,3 +609,111 @@ body,
     }
 
 }
+/* Contorno dos visuais na identidade SPP. */
+.painel,
+.card-indicador {
+    border: 1px solid var(--laranja-spp);
+}
+
+/* Filtros e visuais com espaçamento e identidade consistentes. */
+:root {
+    --fundo: #f5f6f8;
+    --sombra: 0 3px 14px rgba(0, 50, 70, 0.06);
+}
+
+.filtros {
+    flex-basis: auto;
+    gap: 12px;
+    padding: 14px 22px;
+    background: var(--fundo);
+    border-bottom: 0;
+    align-items: stretch;
+}
+
+.campo-filtro {
+    padding: 12px 14px;
+    gap: 8px;
+    border: 1px solid var(--laranja-spp);
+    border-radius: 10px;
+    background: var(--branco);
+    box-shadow: var(--sombra);
+    justify-content: center;
+}
+
+.campo-filtro label,
+.campo-comparacao label {
+    color: var(--azul);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.campo-filtro select {
+    height: 38px;
+    border-radius: 7px;
+    font-size: 12px;
+    background: #fafbfd;
+}
+
+.campo-filtro select:focus-visible,
+.campo-comparacao select:focus-visible,
+.seletor-racas:focus-visible {
+    outline: 2px solid var(--laranja-spp);
+    outline-offset: 2px;
+}
+
+#filtro-raio,
+#comparacao-raio {
+    accent-color: var(--azul);
+}
+
+#valor-raio {
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: #fff3e5;
+    color: var(--azul);
+    white-space: nowrap;
+}
+
+.painel,
+.card-indicador {
+    border-radius: 10px;
+    box-shadow: var(--sombra);
+}
+
+.card-indicador {
+    padding: 18px;
+    gap: 14px;
+}
+
+.card-icone {
+    background: #fff3e5;
+    color: var(--azul);
+    border-radius: 9px;
+}
+
+.card-titulo {
+    color: #526269;
+    font-size: 11px;
+}
+
+body[data-pagina="comparacao"] .comparacao-local,
+body[data-pagina="comparacao"] .comparacao-configuracao {
+    border: 1px solid var(--laranja-spp);
+    border-radius: 10px;
+    box-shadow: var(--sombra);
+    background: var(--branco);
+}
+
+@media (max-width: 900px) {
+    .filtros { padding: 12px 16px; gap: 10px; }
+    .campo-filtro { padding: 10px 12px; }
+}
+
+@media (max-width: 720px) {
+    .filtros { padding: 10px 12px; }
+    .card-indicador { padding: 14px; }
+}
+
+.comparacao-controle-raca { padding: 12px 13px; border-bottom: 1px solid #edf1f2; flex: 0 0 auto; }
+.comparacao-controle-raca .controle-racas { width: 100%; max-width: none; min-width: 0; }
+.comparacao-raca-vazia { margin: 0 0 14px; color: #66757f; font-size: 11px; line-height: 1.5; }

@@ -50,7 +50,7 @@
 }
 
 .local-a .comparacao-identificador { background: #00506e; }
-.local-b .comparacao-identificador { background: #3b7d95; }
+.local-b .comparacao-identificador { background: #F08200; }
 
 .comparacao-campos {
     display: grid;
@@ -217,7 +217,7 @@
 }
 
 .legenda-a { background: #00506e; }
-.legenda-b { background: #3b7d95; }
+.legenda-b { background: #F08200; }
 
 .comparacao-painel-indicadores {
     display: flex;
@@ -270,7 +270,7 @@
     text-overflow: ellipsis;
 }
 
-.comparacao-cabecalho-local.local-b strong { color: #3b7d95; }
+.comparacao-cabecalho-local.local-b strong { color: #F08200; }
 
 .comparacao-col-diferenca {
     text-align: right;
@@ -304,7 +304,7 @@
 }
 
 .comparacao-valor-a { color: #00506e; }
-.comparacao-valor-b { color: #3b7d95; }
+.comparacao-valor-b { color: #F08200; }
 
 .comparacao-diferenca {
     text-align: right;
@@ -358,7 +358,7 @@
 }
 
 .mini-comparacao-letra.a { background: #00506e; }
-.mini-comparacao-letra.b { background: #3b7d95; }
+.mini-comparacao-letra.b { background: #F08200; }
 
 .mini-comparacao-trilho {
     height: 7px;
@@ -373,7 +373,7 @@
 }
 
 .mini-comparacao-barra.a { background: #00506e; }
-.mini-comparacao-barra.b { background: #3b7d95; }
+.mini-comparacao-barra.b { background: #F08200; }
 
 .mini-comparacao-valor {
     text-align: right;

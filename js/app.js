@@ -68,11 +68,13 @@ const OPCOES_RACA = {
     amarela: "Amarela", indigena: "Indígena"
 };
 const racasSelecionadas = {
-    mapa: new Set(["preta", "parda"]),
-    distancia: new Set(["preta", "parda"])
+    mapa: new Set(),
+    distancia: new Set(),
+    comparacao: new Set()
 };
 
 function percentualRacas(dados, selecionadas) {
+    if (!selecionadas.size) return null;
     const total = Object.keys(OPCOES_RACA).reduce(
         (soma, chave) => soma + numero(dados?.[chave]), 0
     );
@@ -83,16 +85,18 @@ function percentualRacas(dados, selecionadas) {
 }
 
 function tituloRacas(contexto) {
+    if (!racasSelecionadas[contexto].size) return "Selecione raça / cor";
     return "População: " + [...racasSelecionadas[contexto]]
         .map(chave => OPCOES_RACA[chave]).join(" + ");
 }
 
 function criarFiltrosRaca() {
-    for (const [contexto, seletor] of [
+    for (const [contexto, seletor, destino] of [
         ["mapa", elementos.tema],
-        ["distancia", elementos.indicadorDistancia]
+        ["distancia", elementos.indicadorDistancia],
+        ["comparacao", null, document.getElementById("filtro-raca-comparacao")]
     ]) {
-        if (!seletor) continue;
+        if (!seletor && !destino) continue;
         const campo = document.createElement("fieldset");
         campo.className = "filtro-racas";
         campo.id = 'opcoes-raca-' + contexto;
@@ -144,15 +148,12 @@ function criarFiltrosRaca() {
             input.checked = racasSelecionadas[contexto].has(chave);
             input.addEventListener("change", () => {
                 const selecionadas = racasSelecionadas[contexto];
-                if (!input.checked && selecionadas.size === 1) {
-                    input.checked = true;
-                    return;
-                }
                 if (input.checked) selecionadas.add(chave);
                 else selecionadas.delete(chave);
                 atualizar();
                 if (contexto === "mapa") atualizarTemaMapa();
-                else renderizarGraficoDistancia();
+                else if (contexto === "distancia") renderizarGraficoDistancia();
+                else renderizarTabelaComparacao();
             });
             label.append(input, document.createTextNode(nome));
             campo.appendChild(label);
@@ -163,22 +164,25 @@ function criarFiltrosRaca() {
         resumo.className = "resumo-racas sr-only";
         campo.appendChild(resumo);
         function atualizar() {
-            controle.hidden = seletor.value !== "raca";
+            controle.hidden = Boolean(seletor && seletor.value !== "raca");
             if (controle.hidden && campo.matches(":popover-open")) campo.hidePopover();
-            campo.disabled = seletor.disabled;
-            botao.disabled = seletor.disabled;
+            campo.disabled = Boolean(seletor?.disabled);
+            botao.disabled = Boolean(seletor?.disabled);
             botao.textContent = racasSelecionadas[contexto].size === 5
                 ? 'Todas as opções'
-                : [...racasSelecionadas[contexto]].map(chave => OPCOES_RACA[chave]).join(' + ');
+                : ([...racasSelecionadas[contexto]].map(chave => OPCOES_RACA[chave]).join(' + ') || 'Selecione raça / cor');
             botao.title = botao.textContent;
             resumo.textContent = 'Selecione uma ou mais opções.';
         }
-        seletor.parentElement.insertAdjacentElement("afterend", controle);
+        if (destino) destino.appendChild(controle);
+        else seletor.parentElement.insertAdjacentElement("afterend", controle);
         document.body.appendChild(campo);
-        seletor.addEventListener("change", atualizar);
-        new MutationObserver(atualizar).observe(seletor, {
-            attributes: true, attributeFilter: ["disabled"]
-        });
+        if (seletor) {
+            seletor.addEventListener("change", atualizar);
+            new MutationObserver(atualizar).observe(seletor, {
+                attributes: true, attributeFilter: ["disabled"]
+            });
+        }
         atualizar();
     }
 }
@@ -1865,24 +1869,6 @@ function atualizarDashboard(
                 )
                 : "-";
 
-    const cobertura =
-        resultado.setores > 0
-            ? resultado.setoresComIPVS
-                /
-                resultado.setores
-                *
-                100
-            : 0;
-
-    document
-        .getElementById(
-            "card-ipvs"
-        )
-        .textContent =
-            formatarPercentual(
-                cobertura
-            );
-
     document
         .getElementById(
             "rodape-populacao"
@@ -2495,6 +2481,11 @@ function renderizarGraficoDistancia() {
     const indicador =
         elementos.indicadorDistancia.value;
 
+    if (indicador === "raca" && !racasSelecionadas.distancia.size) {
+        container.textContent = "Selecione uma ou mais opções de raça / cor.";
+        return;
+    }
+
     const valores =
         dadosFaixasDistancia.map(
             faixa =>
@@ -2599,8 +2590,7 @@ function limparIndicadores() {
         of [
             "card-setores",
             "card-populacao",
-            "card-renda",
-            "card-ipvs"
+            "card-renda"
         ]
     ) {
         const elemento =

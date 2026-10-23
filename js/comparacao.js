@@ -7,7 +7,7 @@ const COR_COMPARACAO_A =
     "#00506e";
 
 const COR_COMPARACAO_B =
-    "#3b7d95";
+    "#F08200";
 
 const COR_PERIMETRO_SPP =
     "#F08200";
@@ -1902,35 +1902,6 @@ function calcularDerivadosComparacao(
     criterio
 ) {
 
-    const totalRaca =
-        resultado.branca
-        +
-        resultado.preta
-        +
-        resultado.parda
-        +
-        resultado.amarela
-        +
-        resultado.indigena;
-
-
-    const pretaParda =
-        totalRaca >
-            0
-            ?
-            (
-                resultado.preta
-                +
-                resultado.parda
-            )
-            /
-            totalRaca
-            *
-            100
-            :
-            0;
-
-
     const totalGenero =
         resultado.feminina
         +
@@ -1989,8 +1960,6 @@ function calcularDerivadosComparacao(
 
 
     return {
-
-        pretaParda,
 
         feminina,
 
@@ -2275,7 +2244,7 @@ function miniComparacao(
                 </div>
 
                 <div class="mini-comparacao-valor">
-                    ${formatarPercentual(valorA)}
+                    ${valorA == null ? "—" : formatarPercentual(valorA)}
                 </div>
 
             </div>
@@ -2300,7 +2269,7 @@ function miniComparacao(
                 </div>
 
                 <div class="mini-comparacao-valor">
-                    ${formatarPercentual(valorB)}
+                    ${valorB == null ? "—" : formatarPercentual(valorB)}
                 </div>
 
             </div>
@@ -2474,11 +2443,13 @@ function renderizarTabelaComparacao() {
             </h3>
 
 
-            ${miniComparacao(
-                "População preta + parda",
-                da.pretaParda,
-                db.pretaParda
-            )}
+            ${racasSelecionadas.comparacao.size
+                ? miniComparacao(
+                    tituloRacas("comparacao"),
+                    percentualRacas(ia, racasSelecionadas.comparacao),
+                    percentualRacas(ib, racasSelecionadas.comparacao)
+                )
+                : '<p class="comparacao-raca-vazia">Selecione uma ou mais opções de raça / cor para comparar os territórios.</p>'}
 
 
             ${miniComparacao(
